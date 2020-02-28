@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Imagine</title>
+    </head>
+    <body>
+        <p><strong>Navigation:</strong> 
+            <a href={{ url_for('index') }} >Home</a> 
+            <a href={{ url_for('event') }}>Events</a>
+        </p>
+        {% block content %}{% endblock %}
+    </body>
+</html>
