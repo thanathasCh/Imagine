@@ -2,13 +2,62 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Imagine</title>
+        <title>{{ title }} | Imagine</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.css.map') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css.map') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css.map') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css.map') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/npm.js') }}"></script>
     </head>
     <body>
-        <p><strong>Navigation:</strong> 
-            <a href={{ url_for('index') }} >Home</a> 
-            <a href={{ url_for('event') }}>Events</a>
-        </p>
-        {% block content %}{% endblock %}
+
+        <header>
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <img style="max-width: 86px; margin-top: 8px; margin-right: 16px;" src="{{ url_for('static', filename='images/favicon.png') }}">
+                    </div>
+                
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="{{ url_for('index') }}">Home</a></li>
+                            <li><a href="{{ url_for('event') }}">Events</a></li> 
+                        </ul>
+                        
+                        <form class="navbar-form navbar-right" action="">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Enter Username" required>
+                                <input type="password" class="form-control" placeholder="Password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                            <a class="btn btn-default" role="button" href="/signin">Sign in</a>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+            <!-- Flash Message -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {%  endwith %}
+
+        </header>
+        <div class="container-fluid">
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>

@@ -1,35 +1,39 @@
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template, url_for, flash
 import numpy as np
 
 app = Flask('Imagine')
-
+'''
+    flash: info, danger, warning, success
+'''
 
 @app.route('/')
 def index():
-    return render_template('main/index.html')
+    return render_template('main.html')
 
 # Login Page
+@app.route('/login')
 def login():
-    pass
+    return render_template('main.html')
+    
 # end
 
 # Event Page
 @app.route('/event')
 def event():
-    return render_template('event/index.html')
+    return render_template('event.html')
 
+@app.route('/addEvent')
 def addEvent():
-    pass
+    return render_template('addevent.html')
+
+@app.route('/eventdetail')
+def eventDetail():
+    return 'Event Detail'
 
 def editEvent():
     pass
 
 def deleteEvent():
-    pass
-# end
-
-# Event Image Page
-def eventImage():
     pass
 
 def addEventImage():
@@ -43,11 +47,18 @@ def deleteEventImage():
 def imageFilter():
     pass
 
-def updateImage():
+def uploadImage():
     pass
 
 def returnResult():
     pass
+# end
+
+# Error Pages
+@app.errorhandler(404)
+def page_not_found(e):
+    return 'This page is not finished yet! GO BACK!!'
+# end
 
 '''
 @app.route('/test/<string:user>')
@@ -57,4 +68,7 @@ def test(user):
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.debug = True
+    app.run()

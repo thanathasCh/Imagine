@@ -1,0 +1,27 @@
+{% set title = 'Events' %}
+{% extends "layout.html" %}
+{% block content %}
+
+<section>
+    <div class="panel-group">
+        <div class="block block--underline">
+            <h1 style="display: inline;">{{ title }}</h1>
+            <a class="btn btn-primary" style="float: right;" role="button" href="{{ url_for('addEvent') }}">Add Event</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="..." alt="...">
+                <div class="caption">
+                    <h3>Thumbnail label</h3>
+                    <p>...</p>
+                    <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
