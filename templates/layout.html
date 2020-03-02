@@ -4,18 +4,14 @@
         <meta charset="utf-8" />
         <title>{{ title }} | Imagine</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.css.map') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css.map') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css.map') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css.map') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/datetimepicker.min.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/datetimepicker.full.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/npm.js') }}"></script>
     </head>
     <body>
 
@@ -32,10 +28,12 @@
                             <li><a href="{{ url_for('event') }}">Events</a></li> 
                         </ul>
                         
-                        <form class="navbar-form navbar-right" action="">
+                        <form class="navbar-form navbar-right" action="{{ url_for('login') }}" method="POST">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Enter Username" required>
-                                <input type="password" class="form-control" placeholder="Password" required>
+                                <input type="text" class="form-control" placeholder="Enter Username" 
+                                       required value=" {{ request.form.username }}" name="username">
+                                <input type="password" class="form-control" placeholder="Password" 
+                                       required value="{{ request.form.password }}" name="password">
                             </div>
                             <button type="submit" class="btn btn-primary">Login</button>
                             <a class="btn btn-default" role="button" href="/signin">Sign in</a>
@@ -56,7 +54,7 @@
             {%  endwith %}
 
         </header>
-        <div class="container-fluid">
+        <div class="container-fluid" style="max-width: 1000px; margin: auto;">
             {% block content %}{% endblock %}
         </div>
     </body>

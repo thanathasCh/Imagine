@@ -2,6 +2,45 @@
 {% extends "layout.html" %}
 {% block content %}
 
-Add Event
+<section>
+    <div class="panel-group">
+        <div class="block block--underline">
+            <h1 style="display: inline;">{{ title }}</h1>
+        </div>
+    </div>
+    <form id="eventForm" action="{{ url_for('addEvent') }}" method="POST">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-12">
+                    <label>Event Name</label>
+                    <input type="text" class="form-control" placeholder="Enter Event Name" 
+                        required value=" {{ request.form.eventname }}" name="eventname">
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-6">
+                    <label>Date</label>
+                    <input id="date-picker" class="form-control" nmae="date"
+                        type="text" required value="{{ request.form.date }}">
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Description (Not over 500 characters)</label>
+                    <textarea class="form-control" maxlength="500" rows="5" name="description" 
+                              value="{{ request.form.description }}" form="eventForm"></textarea>
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-12">
+                    <input type="file" required multiple accept="image/*">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Add</button>
+    </form>
+    
+</section>
 
+<script type="text/javascript" src="{{ url_for('static', filename='js/date-picker.js') }}"></script>
 {% endblock %}
