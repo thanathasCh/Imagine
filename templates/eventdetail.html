@@ -1,0 +1,29 @@
+{% set title = 'Event Detail' %}
+{% extends "shared/layout.html" %}
+{% block content %}
+
+<section>
+    <div class="panel-group">
+        <div class="block block--underline">
+            <div>
+                <h1 style="display: inline;">{{ model['name'] }}</h1>
+                <a class="btn btn-primary" style="float: right;" role="button" 
+                   href="{{ url_for('editEvent', id=model['id']) }}">
+                   Edit
+                </a>
+            </div>
+            <label class="label label-info">{{ model['date'] }}</label>
+        </div>
+
+        <div class="row">
+            {% for item in model['images'] %}
+                <div class="col-sm-6 col-md-6">
+                    
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+</section>
+
+{% endblock %}

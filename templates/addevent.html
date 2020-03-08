@@ -1,5 +1,5 @@
 {% set title = 'Add Event' %}
-{% extends "layout.html" %}
+{% extends "shared/layout.html" %}
 {% block content %}
 
 <section>
@@ -8,19 +8,19 @@
             <h1 style="display: inline;">{{ title }}</h1>
         </div>
     </div>
-    <form id="eventForm" action="{{ url_for('addEvent') }}" method="POST">
+    <form id="eventForm" action="{{ url_for('addEventSubmit') }}" method="POST">
         <div class="form-group">
             <div class="row">
                 <div class="col-12">
                     <label>Event Name</label>
-                    <input type="text" class="form-control" placeholder="Enter Event Name" 
+                    <input id="event-name" type="text" class="form-control" placeholder="Enter Event Name" 
                         required value=" {{ request.form.eventname }}" name="eventname">
                 </div>
             </div><br>
             <div class="row">
                 <div class="col-6">
                     <label>Date</label>
-                    <input id="date-picker" class="form-control" nmae="date"
+                    <input id="date-picker" class="form-control" name="date"
                         type="text" required value="{{ request.form.date }}">
                 </div>
             </div><br>
@@ -33,14 +33,19 @@
             </div><br>
             <div class="row">
                 <div class="col-12">
-                    <input type="file" required multiple accept="image/*">
+                    <input id="add-images" type="file" required multiple accept="image/*" name="eventImages">
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12" id="image-gallery"></div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Add</button>
+        <button id="confirm-modal" type="submit" class="btn btn-primary btn-block"
+                data-toggle="modal" data-target="#confirm_modal">Add</button>
     </form>
     
 </section>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/date-picker.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/imageFiles.js') }}"></script>
 {% endblock %}

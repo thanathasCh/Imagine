@@ -1,5 +1,5 @@
 {% set title = 'Events' %}
-{% extends "layout.html" %}
+{% extends "shared/layout.html" %}
 {% block content %}
 
 <section>
@@ -9,35 +9,29 @@
             <a class="btn btn-primary" style="float: right;" role="button" href="{{ url_for('addEvent') }}">Add Event</a>
         </div>
     </div>
-    {% for i in range(0, events|length, 2) %}
-        <div class="row">
-            <div class="col-sm-6 col-md-6">
-                <div class="thumbnail">
-                    <img src="{{ events[i]['imageUrl'] }}">
-                    <div class="caption">
-                        <h3>{{ events[i]['eventName'] }}</h3>
-                        <p>{{ events[i]['description'] }}</p>
-                        <p><a href="{{ url_for('eventDetail', id=events[i]['id']) }}" class="btn btn-primary" role="button">View</a>
-                           <a href="{{ url_for('editEvent', id=events[i]['id']) }}" class="btn btn-default" role="button">Edit</a></p>
-                    </div>
+    <div class="row">
+        {% for item in events %}
+        <div class="col-sm-6 col-md-6">
+            <div class="thumbnail">
+                <img scr="{{ item['imageUrl'] }}">
+                <div class="caption">
+                    <h3>{{ item['eventName'] }}</h3>
+                    <p>{{ item['description'] }}</p>
+                    <p>
+                        <a class="btn btn-primary" href="{{  url_for('eventDetail', id=item['id']) }}"
+                        role="button">
+                        View
+                        </a>
+                        <a class="btn btn-default" href="{{ url_for('editEvent', id=item['id']) }}" 
+                        role="button">
+                        Edit
+                        </a>
+                    </p>
                 </div>
             </div>
-            
-            {% if events|length > i+1 %}
-                <div class="col-sm-6 col-md-6">
-                    <div class="thumbnail">
-                        <img src="{{ events[i+1]['imageUrl'] }}">
-                        <div class="caption">
-                            <h3>{{ events[i+1]['eventName'] }}</h3>
-                            <p>{{ events[i+1]['description'] }}</p>
-                            <p><a href="{{ url_for('eventDetail', id=events[i]['id']) }}" class="btn btn-primary" role="button">View</a> 
-                               <a href="{{ url_for('editEvent', id=events[i]['id']) }}" class="btn btn-default" role="button">Edit</a></p>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
         </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
     
 </section>
 
