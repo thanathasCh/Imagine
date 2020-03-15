@@ -1,87 +1,84 @@
-# Project Title
+# Imagine
 
-One Paragraph of project description goes here
+## Installing
+This is project based on python. In order to run this project, you need following libraries:
 
-## Getting Started
+1. Flask
+2. Numpy
+3. More will come
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+## Developing
 
-### Prerequisites
+### Flask
 
-What things you need to install the software and how to install them
+In flask, there are folder specific folder for components:
+    1. templates: All html files or your website's pages will be saved within this folder
+    2. statuc: Static folders such as: Javascript, Css, Image or Font are located in this folder. I already seperated them in to folders that corresspond to their name like js, css, images and font accordingly.
 
+Creating Page:
+    After you have craeted the new website page and want it to be accessable in URL, you will have to create function inside `main.py` and add it to application's route.
+
+    For example, I have created a page called newPage.html and want to add it to website. 
+       First parameter inside @app.route is url path so if I want to call this function from url dict. 
+       The second parameter is optional, it is used to specify method that this route allows to make access.
+
+       At the end, youu will have to return with render_template which is equivalence to return View() in .net core, and inside it will be string which is the same as html file that you want to show. Moreover, you can pass the model or data to view passs well with the following code
+
+    ```
+    @app.route('/newPage', methods=['GET', 'POST']):
+        data = {
+            ..... json format .....
+        }
+
+        return render_template('newPage.html', model=data)
+    ```
+
+    At some point, you may need to use flash message and you can call it with simple `flash()`, where the first parameter is the message and the second one is type of message which will be shown to different color.
+
+    ```
+    @app.route('/newPage', methods=['GET', 'POST']):
+        flash('message', 'type') # types: info, danger, warning, success
+
+        return render_template('newPage.html')
+    ```
+
+### Jinjar
+
+Jinjar is template language that allow you to add programming logic to your html code, just like razor in .net core
+
+Most used jinja
+1. variable block
+   ```
+   {{ value }}
+   ```
+
+2. if else block
+    ```
+    {% if _expression_ %}
+        code
+    {% else %}
+        code for else
+    {% endif %}
+    ```
+
+3. for loop block
+    ```
+    {% for _ in _ %}
+        code
+    {% endfor %}
+    ```
+
+### Html
+
+If you want to add new html page, you will have to put content block to import requried js, css and header to yuor page
+
+````
+{% set title = 'Page Name' %}   <-- Add page name over here
+{% extends "shared/layout.html" %}
+{% block content %}
+
+html body
+
+{% endblock %}
 ```
-Give examples
-```
 
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc

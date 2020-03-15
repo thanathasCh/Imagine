@@ -161,7 +161,7 @@ def eventDetail(id):
             'https://scontent.fbkk2-8.fna.fbcdn.net/v/t31.0-0/c53.0.200.200a/p200x200/14444806_1025838224181315_1956270792039579357_o.jpg?_nc_cat=102&_nc_sid=cdbe9c&_nc_ohc=sBRDvizddZcAX9FxMs4&_nc_ht=scontent.fbkk2-8.fna&oh=51fc6dcab2436f4d881024e50b209cec&oe=5E99498F'
         ]
     }
-    return render_template('eventdetail.html', model = model)
+    return render_template('eventdetail.html', model=model)
 
 @app.route('/editEvent/<int:id>')
 def editEvent(id):
