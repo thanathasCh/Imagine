@@ -22,25 +22,25 @@ For example, I have created a page called newPage.html and want to add it to web
     First parameter inside @app.route is url path so if I want to call this function from url dict. 
     The second parameter is optional, it is used to specify method that this route allows to make access.
 
-    At the end, youu will have to return with render_template which is equivalence to return View() in .net core, and inside it will be string which is the same as html file that you want to show. Moreover, you can pass the model or data to view passs well with the following code
+At the end, youu will have to return with render_template which is equivalence to return View() in .net core, and inside it will be string which is the same as html file that you want to show. Moreover, you can pass the model or data to view passs well with the following code
 
-    ```
-    @app.route('/newPage', methods=['GET', 'POST']):
-        data = {
-            ..... json format .....
-        }
+```
+@app.route('/newPage', methods=['GET', 'POST']):
+    data = {
+        ..... json format .....
+    }
 
-        return render_template('newPage.html', model=data)
-    ```
+    return render_template('newPage.html', model=data)
+```
 
-    At some point, you may need to use flash message and you can call it with simple `flash()`, where the first parameter is the message and the second one is type of message which will be shown to different color.
+At some point, you may need to use flash message and you can call it with simple `flash()`, where the first parameter is the message and the second one is type of message which will be shown to different color.
 
-    ```
-    @app.route('/newPage', methods=['GET', 'POST']):
-        flash('message', 'type') # types: info, danger, warning, success
+```
+@app.route('/newPage', methods=['GET', 'POST']):
+    flash('message', 'type') # types: info, danger, warning, success
 
-        return render_template('newPage.html')
-    ```
+    return render_template('newPage.html')
+```
 
 ### Jinjar
 
