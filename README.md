@@ -18,11 +18,11 @@ In flask, there are folder specific folder for components:
 Creating Page:
     After you have craeted the new website page and want it to be accessable in URL, you will have to create function inside `main.py` and add it to application's route.
 
-    For example, I have created a page called newPage.html and want to add it to website. 
-       First parameter inside @app.route is url path so if I want to call this function from url dict. 
-       The second parameter is optional, it is used to specify method that this route allows to make access.
+For example, I have created a page called newPage.html and want to add it to website. 
+    First parameter inside @app.route is url path so if I want to call this function from url dict. 
+    The second parameter is optional, it is used to specify method that this route allows to make access.
 
-       At the end, youu will have to return with render_template which is equivalence to return View() in .net core, and inside it will be string which is the same as html file that you want to show. Moreover, you can pass the model or data to view passs well with the following code
+    At the end, youu will have to return with render_template which is equivalence to return View() in .net core, and inside it will be string which is the same as html file that you want to show. Moreover, you can pass the model or data to view passs well with the following code
 
     ```
     @app.route('/newPage', methods=['GET', 'POST']):
@@ -48,25 +48,25 @@ Jinjar is template language that allow you to add programming logic to your html
 
 Most used jinja
 1. variable block
-   ```
-   {{ value }}
-   ```
+```
+{{ value }}
+```
 
 2. if else block
-    ```
-    {% if _expression_ %}
-        code
-    {% else %}
-        code for else
-    {% endif %}
-    ```
+```
+{% if _expression_ %}
+    code
+{% else %}
+    code for else
+{% endif %}
+```
 
 3. for loop block
-    ```
-    {% for _ in _ %}
-        code
-    {% endfor %}
-    ```
+```
+{% for _ in _ %}
+    code
+{% endfor %}
+```
 
 ### Html
 
