@@ -7,23 +7,28 @@
         <div class="block block--underline">
             <div>
                 <h1 style="display: inline;">{{ model['name'] }}</h1>
-                <a class="btn btn-primary" style="float: right;" role="button" 
+                <a class="btn btn-default" style="float: right;" role="button"
                    href="{{ url_for('editEvent', id=model['id']) }}">
-                   Edit
+                    Edit
+                </a>
+                <a class="btn btn-primary" stype="float: right;" role="button">
+                    Find yourself!
                 </a>
             </div>
             <label class="label label-info">{{ model['date'] }}</label>
         </div>
-
         <div class="row">
-            {% for item in model['images'] %}
-                <div class="col-sm-6 col-md-6">
-                    
+            {% for image in model['images'] %}
+                <div class="col-sm-3 col-md-3 mt-5">
+                    <img class="img-thumbnail" src={{ image }} data-toggle="modal" data-target="#image-modal">
                 </div>
             {% endfor %}
         </div>
     </div>
-    
+    {% include 'shared/_imageModal.html' %}
 </section>
 
+<script type="text/javascript" src="{{ url_for('static', filename='js/pages/image_modal.js') }}"></script>
+
 {% endblock %}
+

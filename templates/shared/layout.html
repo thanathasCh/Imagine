@@ -4,14 +4,11 @@
         <meta charset="utf-8" />
         <title>{{ title }} | Imagine</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css.map') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css.map') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/datetimepicker.min.css') }}">
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/datetimepicker.full.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/shared/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/shared/datetimepicker.full.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/shared/bootstrap.min.js') }}"></script>
     </head>
     <body>
 
@@ -31,12 +28,12 @@
                         <form class="navbar-form navbar-right" action="{{ url_for('login') }}" method="POST">
                             <div class="form-group">
                                 <input type="text" class="form-control" placeholder="Enter Username" 
-                                       required value=" {{ request.form.username }}" name="username">
+                                       required name="username">
                                 <input type="password" class="form-control" placeholder="Password" 
-                                       required value="{{ request.form.password }}" name="password">
+                                       required name="password">
                             </div>
                             <button type="submit" class="btn btn-primary">Login</button>
-                            <a class="btn btn-default" role="button" href="/signin">Sign in</a>
+                            <a class="btn btn-default" role="button" href="/signup">Sign in</a>
                         </form>
                     </div>
                 </div>

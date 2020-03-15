@@ -14,21 +14,21 @@
                 <div class="col-12">
                     <label>Event Name</label>
                     <input id="event-name" type="text" class="form-control" placeholder="Enter Event Name" 
-                        required value=" {{ request.form.eventname }}" name="eventname">
+                        required name="eventname">
                 </div>
             </div><br>
             <div class="row">
                 <div class="col-6">
                     <label>Date</label>
                     <input id="date-picker" class="form-control" name="date"
-                        type="text" required value="{{ request.form.date }}">
+                        type="text" autocomplete="off">
                 </div>
             </div><br>
             <div class="row">
                 <div class="col-12">
                     <label>Description (Not over 500 characters)</label>
-                    <textarea class="form-control" maxlength="500" rows="5" name="description" 
-                              value="{{ request.form.description }}" form="eventForm"></textarea>
+                    <textarea class="form-control" maxlength="500" rows="5" 
+                              name="description" form="eventForm"></textarea>
                 </div>
             </div><br>
             <div class="row">
@@ -46,6 +46,6 @@
     
 </section>
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/date-picker.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/imageFiles.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/shared/date-picker.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/pages/imageFiles.js') }}"></script>
 {% endblock %}
