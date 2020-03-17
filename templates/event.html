@@ -16,7 +16,7 @@
                     <img class="img-thumbnail" src={{ item['imageUrl'] }}>
                     <div class="col-12 mt-3">
                         <h3>{{ item['eventName'] }}</h3>
-                        <p>{{ item['description'] }}</p>
+                        <p style="word-break:break-all;">{{ item['description'] }}</p>
                         <p>
                             <a class="btn btn-primary" href="{{  url_for('eventDetail', id=item['id']) }}"
                                role="button">

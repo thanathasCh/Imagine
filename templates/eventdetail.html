@@ -5,22 +5,25 @@
 <section>
     <div class="panel-group">
         <div class="block block--underline">
-            <div>
-                <h1 style="display: inline;">{{ model['name'] }}</h1>
-                <a class="btn btn-default" style="float: right;" role="button"
-                   href="{{ url_for('editEvent', id=model['id']) }}">
-                    Edit
-                </a>
-                <a class="btn btn-primary" stype="float: right;" role="button">
-                    Find yourself!
-                </a>
+            <div class="row">
+                <div class="col-9">
+                    <h1>{{ model['eventName'] }}</h1>
+                </div>
+                <div class="col-2">
+                    <button id="js-camera-activate" class="btn btn-primary" role="button">Find yourself!</button>
+                </div>
+                <div class="col-1">
+                    <a class="btn btn-outline-primary" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['id']) }}">
+                        Edit
+                    </a>
+                </div>
             </div>
             <label class="label label-info">{{ model['date'] }}</label>
         </div>
         <div class="row">
-            {% for image in model['images'] %}
+            {% for i in range(model['images']|length) %}
                 <div class="col-sm-3 col-md-3 mt-5">
-                    <img class="img-thumbnail" src={{ image }} data-toggle="modal" data-target="#image-modal">
+                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ model['images'][i] }}>
                 </div>
             {% endfor %}
         </div>
@@ -29,6 +32,7 @@
 </section>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/pages/image_modal.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/pages/camera.js') }}"></script>
 
 {% endblock %}
 

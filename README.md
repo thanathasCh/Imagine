@@ -33,11 +33,19 @@ At the end, youu will have to return with render_template which is equivalence t
     return render_template('newPage.html', model=data)
 ```
 
-At some point, you may need to use flash message and you can call it with simple `flash()`, where the first parameter is the message and the second one is type of message which will be shown to different color.
+At some point, you may need to use flash message and you can call it with simple `flash`. I have already created the class called flash, you can use it like this
 
 ```
 @app.route('/newPage', methods=['GET', 'POST']):
-    flash('message', 'type') # types: info, danger, warning, success
+    flash.success('Message') # parameter is message that you want to show
+
+    return render_template('newPage.html')
+```
+
+However, I do recommend you to add new message to messages.py file, so you can simple call it with `messages.{name of message}` like this
+
+@app.route('/newPage', methods=['GET', 'POST']):
+    flash.success(message.something)
 
     return render_template('newPage.html')
 ```
