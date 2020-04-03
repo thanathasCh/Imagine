@@ -1,10 +1,14 @@
 <!-- Modal -->
-<div class="modal fade in bs-example-modal-lg" id="image-modal" tabindex="-1" role="dialog" 
-     aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-     <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+<div class="modal" id="image-modal" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false" data-keyboard="false">
      <div class="modal-dialog modal-lg  " role="document">
-     <div class="modal-content">
-       <img id="js-image-modal">
+     <div class="modal-content row">
+       <div class="col-12 text-right">
+         <button class="close" type="button" data-dismiss="modal" aria-label="Close">&times;</button>
+        </div>
+        <div class="col-12">
+          <img class="img-thumbnail" id="js-image-modal">
+        </div>
     </div>
   </div>
 </div>
