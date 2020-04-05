@@ -10,7 +10,7 @@
                     <h1>{{ model['eventName'] }}</h1>
                 </div>
                 <div class="col-2">
-                    <button id="js-camera-activate" class="btn btn-primary" role="button">Find yourself!</button>
+                    <a class="btn btn-primary" role="button" href="{{ url_for('selectImage') }}">Find yourself!</a>
                 </div>
                 <div class="col-1">
                     <a class="btn btn-outline-primary" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['id']) }}">
@@ -29,11 +29,11 @@
         </div>
     </div>
     {% include 'shared/_imageModal.html' %}
-    {% include 'shared/_cameraModal.html' %}
+
 </section>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/pages/image_modal.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/pages/camera_modal.js') }}"></script>
+
 
 {% endblock %}
 

@@ -3,9 +3,13 @@ import numpy as np
 import data
 import messages
 import flash
+import os
+from werkzeug.utils import secure_filename
+import urllib
 
 app = Flask('Imagine')
 
+OUTPUT_PATH = 'datasets/img.jpg'
 @app.route('/')
 def index():
     return render_template('main.html')
@@ -54,24 +58,43 @@ def addEventSubmit():
         name = request.form['eventname']
         description = request.form['description']
         date = request.form['date']
-        images = request.files['eventImages']
-
+        poster = request.files['posterImage']
+        files = request.files.getlist('eventImages')
+        
         model = {
             'id': len(data.events),
             'eventName': name,
             'description': description,
             'date': date
         }
-
-        data.events.append(model)
-
+        
+        # data.events.append(model)
+       
         # if request.files:
         #     print(request.files['eventImages'])
         #     return 'done'
         # return('halfly done')
+            
 
-    flash('Add Event Successfully', 'info')
+    flash.info(messages.addEventSuccessful)
     return render_template('event.html', events=data.events)
+
+@app.route('/selectImage')
+def selectImage():
+    return render_template('selectimage.html')
+
+@app.route('/processImage', methods = ['POST'])
+def processImage():
+    try:
+        image = request.form['userImage']
+        response = urllib.request.urlopen(image)
+        with open(OUTPUT_PATH, 'wb') as f:
+            f.write(response.file.read())
+    except:
+        image = request.files['userImage']
+        image.save(OUTPUT_PATH)
+    
+    return render_template('processImage.html')
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
@@ -112,4 +135,4 @@ if __name__ == '__main__':
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.debug = True
-    app.run()
+    app.run(debug=True)
