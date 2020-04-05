@@ -1,6 +1,6 @@
 import pyodbc
 
-class DB:
+class Db:
     def __init__(self):
         self.CONNECTION_STRING = """Driver={ODBC Driver 17 for SQL Server};
                                     Server=35.187.239.143;
@@ -9,69 +9,38 @@ class DB:
                                     PWD=alexanderthegreat;"""
         self.db = pyodbc.connect(self.CONNECTION_STRING)
 
+    def getEvents(self, id=None):
+        query = """SELECT id, Name as eventName, CoverImageUrl as imageUrl, 
+                    Description as description, OrganizedDateTime as date
+                    FROM Events """
+        if (id is not None): query += f"WHERE id = {id}"
+        
+        cursor = self.db.cursor()
+        cursorSelect = cursor.execute(query)
 
-dbc = DB()
-# a = """SELECT  Events.id, Name as eventName, CoverImageUrl as imageUrl, 
-#        Description as description, OrganizedDateTime as date, imageUrl
-#        FROM Events,Images WHERE Images.EventId = Events.id"""
+        # construct list of column names       
+        columnNames = [column[0] for column in cursorSelect.description]
+        columnNames.append("imageUrl")
+        fetchQuery = cursorSelect.fetchall()
+        
+        eventIdLists = [column[0] for column in fetchQuery] # construct list of eventId
+        imageLists = []
+        # query imageUrl for each event
+        for i in eventIdLists:
+            imageQuery = f"""SELECT imageUrl FROM Images WHERE EventId={i}"""
+            cursorSelect = dbc.db.execute(imageQuery)
+            flattenImageUrl = [item for sublist in cursorSelect.fetchall() for item in sublist]
+            imageLists.append(flattenImageUrl)
 
-a = """SELECT  Events.id, Name as eventName, CoverImageUrl as imageUrl, 
-       Description as description, OrganizedDateTime as date
-       FROM Events"""
-cursor = dbc.db.cursor()
+        data = {}
+        for i in range(len(fetchQuery)):
+            tempEvent = [x for x in fetchQuery[i]]
+            tempEvent.append(imageLists[i])
+            data[eventIdLists[i]] = dict((zip(columnNames, tempEvent)))
 
-cursorSelect = cursor.execute(a)
-columns = [column[0] for column in cursorSelect.description]
-columns.append("imageUrl")
-print(columns)
-print()
-fetchQuery = cursorSelect.fetchall()
-eventIdLists = [column[0] for column in fetchQuery]
-imageLists = []
+        cursor.close()
+        return data
 
-for i in eventIdLists:
-    query = f"""SELECT imageUrl FROM Images WHERE EventId={i}"""
-    cursorSelect = dbc.db.execute(query)
-    # imageLists.append(list(cursorSelect.fetchall()))
-    abc = cursorSelect.fetchall()
-    flattened = [item for sublist in abc for item in sublist]
-    imageLists.append(flattened)
-print(imageLists)
-print('--------------------')
+dbc = Db()
+dbc.getEvents(1)
 
-# data = []
-data = {}
-sss = 0
-for i in range(len(fetchQuery)):
-    testSingleList = [x for x in fetchQuery[i]]
-    testSingleList.append(imageLists[i])
-    # data.append(dict(zip(columns,testSingleList)))
-    data[sss] = dict((zip(columns,testSingleList)))
-    sss += 1
-
-print()
-print(data)
-
-# results = []
-# for row in test:
-#     # print(type(row))
-    
-    # results.append(dict(zip(columns, row)))
-#     print(row)
-#     print()
-
-# print('aaaa',results)
-
-# # b = dbc.db.execute(a)
-# # data = [x for x in b]
-# # print(data)
-# # results = cursor.execute(a).fetchall()
-# # .fetchone()
-
-# # print(cursor.description)
-# # i = 0
-# # for row in result:
-# #     for a in row:
-# #         print(f'{cursor.description[i][0]}= {a}')
-# #         i +=1
-# #     i = 0
