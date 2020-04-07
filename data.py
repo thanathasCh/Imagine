@@ -16,7 +16,7 @@ events = [
         },
     {
         'id': 2,
-        'eventName': 'Au Loy with you 15 คำ่เดือนรัก',
+        'eventName': 'Au Loy with you 15 ค่ำเดือนรัก',
         'imageUrl': 'https://scontent.fbkk22-3.fna.fbcdn.net/v/t1.0-9/74242336_2354661867965604_8118570546968395776_n.jpg?_nc_cat=103&_nc_sid=dd9801&_nc_eui2=AeH7csKshFzt-_6vdsTrpMCrA0-g9X6gAxfXiYPZD9U5fNDTxJiBjKVHpnVnwd8ToxCVpItaDHNdWULmq2I67Bxxxo2pJB3QvesQM-XKhjZ7QQ&_nc_ohc=i2qoT7theDAAX9FShkC&_nc_ht=scontent.fbkk22-3.fna&oh=5db775cc40cd5029215225fbad20069b&oe=5E94E260',
         'description': 'Bla Bla Bla Bla',
         'date': '11/11/2020',
