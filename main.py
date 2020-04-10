@@ -4,10 +4,11 @@ import data
 import messages
 import flash
 import os
-from werkzeug.utils import secure_filename
-import urllib
+from db import Db
+
 
 app = Flask('Imagine')
+app.secret_key = "super secret key"
 
 OUTPUT_PATH = 'datasets/img.jpg'
 @app.route('/')
@@ -46,7 +47,12 @@ def signCheck():
 # Event Page
 @app.route('/event')
 def event():
-    return render_template('event.html', events=data.events)
+    events = []
+    data = Db().getEvents()
+    for i in data:
+        events.append(data[i])
+    print(data[1])
+    return render_template('event.html', events=events)
 
 @app.route('/addEvent')
 def addEvent():
@@ -60,21 +66,12 @@ def addEventSubmit():
         date = request.form['date']
         poster = request.files['posterImage']
         files = request.files.getlist('eventImages')
-        
-        model = {
-            'id': len(data.events),
-            'eventName': name,
-            'description': description,
-            'date': date
-        }
-        
-        # data.events.append(model)
-       
-        # if request.files:
-        #     print(request.files['eventImages'])
-        #     return 'done'
-        # return('halfly done')
-            
+
+        print(len(files))
+        events = []
+        data = Db().getEvents()
+        for i in data:
+            events.append(data[i])
 
     flash.info(messages.addEventSuccessful)
     return render_template('event.html', events=data.events)
@@ -98,11 +95,19 @@ def processImage():
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
-    return render_template('eventdetail.html', model=data.events[id-1])
+    event = {}
+    data = Db().getEventsById(id)
+    for _,x in data.items():
+        event = x
+    return render_template('eventdetail.html', model=event)
 
 @app.route('/editEvent/<int:id>')
 def editEvent(id):
-    return render_template('editevent.html', model=data.events[id-1])
+    event = {}
+    data = Db().getEventsById(id)
+    for _,x in data.items():
+        event = x
+    return render_template('editevent.html', model=event)
 
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):

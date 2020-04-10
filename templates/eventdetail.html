@@ -21,9 +21,9 @@
             <label class="label label-info">{{ model['date'] }}</label>
         </div>
         <div class="row">
-            {% for i in range(model['images']|length) %}
+            {% for i in range(model['imageUrl']|length) %}
                 <div class="col-sm-3 col-md-3 mt-5">
-                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ model['images'][i] }}>
+                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ model['imageUrl'][i] }}>
                 </div>
             {% endfor %}
         </div>
