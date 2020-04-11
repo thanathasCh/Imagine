@@ -6,6 +6,7 @@ import flash
 import os
 from db import Db
 import urllib
+from pathlib import Path
 
 
 app = Flask('Imagine')
@@ -83,6 +84,13 @@ def selectImage():
 
 @app.route('/processImage', methods = ['POST'])
 def processImage():
+    root_dir = Path('./datasets')
+    items = root_dir.iterdir()
+    
+    for file in items:
+        if file.is_file():
+            os.remove(file)
+
     if request.form.getlist('userImage[]'):
         images = request.form.getlist('userImage[]')
         for i in range(len(images)):
