@@ -1,16 +1,21 @@
 from flask import Flask, request, render_template, url_for
-import numpy as np
+# import numpy as np
 import data
 import messages
 import flash
 import os
 from db import Db
-
+import urllib
+# import storage
+from storage import upload_cover_blob, upload_images_blob
+from model import Event, EventImage
 
 app = Flask('Imagine')
 app.secret_key = "super secret key"
 
 OUTPUT_PATH = 'datasets/img.jpg'
+BUCKET_NAME = 'eventimagefilter'
+
 @app.route('/')
 def index():
     return render_template('main.html')
@@ -49,8 +54,9 @@ def signCheck():
 def event():
     events = []
     data = Db().getEvents()
+    print(data)
     for i in data:
-        events.append(data[i])
+        events.append(i)
     print(data[1])
     return render_template('event.html', events=events)
 
@@ -66,12 +72,20 @@ def addEventSubmit():
         date = request.form['date']
         poster = request.files['posterImage']
         files = request.files.getlist('eventImages')
-
-        print(len(files))
+        
+        imagePath = f'''Event/{name}/Images'''
+        coverImagePath = f'''Event/{name}/CoverImages'''
+        coverImageUrl = upload_cover_blob(BUCKET_NAME, poster, coverImagePath)
+        event = Event(name,coverImageUrl,description,date)
+        eventId = Db().createEvent(event)
+        imageUrls = upload_images_blob(BUCKET_NAME, files, imagePath,eventId)
+        Db().insertEventImage(eventId,imageUrls)
+    
         events = []
         data = Db().getEvents()
         for i in data:
-            events.append(data[i])
+            events.append(i)
+        
 
     flash.info(messages.addEventSuccessful)
     return render_template('event.html', events=data.events)
