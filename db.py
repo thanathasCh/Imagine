@@ -10,7 +10,7 @@ class Db:
         self.db = pyodbc.connect(self.CONNECTION_STRING)
 
     def getEvents(self):
-        query = """SELECT id, Name as eventName, CoverImageUrl as imageUrl, 
+        query = """SELECT id, Name as eventName, CoverImageUrl as CoverimageUrl, 
                     Description as description, OrganizedDateTime as date
                     FROM Events """
         
@@ -19,41 +19,37 @@ class Db:
         columnNames = [column[0] for column in cursorSelect.description]
         fetchQuery = cursorSelect.fetchall()
         
-        eventIds = [column[0] for column in fetchQuery] # construct list of eventId
-
-        data = {}
+        data = []
         for i in range(len(fetchQuery)):
             tempEvent = [x for x in fetchQuery[i]]
-            data[eventIds[i]] = dict((zip(columnNames, tempEvent)))
+            data.append(dict((zip(columnNames, tempEvent))))
 
         cursorSelect.close()
         return data
 
     def getEventsById(self, id):
-        query = f"""SELECT id, Name as eventName, CoverImageUrl as imageUrl, 
+        query = f"""SELECT id, Name as eventName, CoverImageUrl as imageUrls, 
                     Description as description, OrganizedDateTime as date
                     FROM Events WHERE id = {id}"""
+        imageQuery = f"""SELECT imageUrl FROM Images WHERE EventId={id}"""
 
         cursorSelect = self.db.execute(query)
+
         # construct list of column names       
         columnNames = [column[0] for column in cursorSelect.description]
-        columnNames.append("imageUrl")
-        fetchQuery = cursorSelect.fetchall()
+        columnNames.append("imageUrls")
         
-        eventIds = [column[0] for column in fetchQuery] # construct list of eventId
-        imageLists = []
-        # query imageUrl for each event
-        for i in eventIds:
-            imageQuery = f"""SELECT imageUrl FROM Images WHERE EventId={i}"""
-            cursorSelect = self.db.execute(imageQuery)
-            flattenImageUrl = [item for sublist in cursorSelect.fetchall() for item in sublist]
-            imageLists.append(flattenImageUrl)
+        fetchQuery = cursorSelect.fetchone()
 
-        data = {}
-        for i in range(len(fetchQuery)):
-            tempEvent = [x for x in fetchQuery[i]]
-            tempEvent.append(imageLists[i])
-            data[eventIds[i]] = dict((zip(columnNames, tempEvent)))
+        imageLists = []
+        cursorSelect = self.db.execute(imageQuery)
+        flattenImageUrl = [item for sublist in cursorSelect.fetchall() for item in sublist]
+        imageLists.extend(flattenImageUrl)
+
+        event = [x for x in fetchQuery]
+        event.append(imageLists)
+        data = dict((zip(columnNames, event)))
 
         cursorSelect.close()
         return data
+

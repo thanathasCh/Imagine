@@ -54,7 +54,7 @@ def addEventSubmit():
         name = request.form['eventname']
         description = request.form['description']
         date = request.form['date']
-        images = request.files['eventImages']
+        images = request.files.getlist('eventImages')
 
         model = {
             'id': len(data.events),
@@ -62,15 +62,14 @@ def addEventSubmit():
             'description': description,
             'date': date
         }
-
+        
         data.events.append(model)
-
         # if request.files:
         #     print(request.files['eventImages'])
         #     return 'done'
         # return('halfly done')
 
-    flash('Add Event Successfully', 'info')
+    # flash('Add Event Successfully', 'info')
     return render_template('event.html', events=data.events)
 
 @app.route('/eventDetail/<int:id>')
