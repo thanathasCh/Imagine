@@ -5,12 +5,13 @@ import messages
 import flash
 import os
 from db import Db
+import urllib
 
 
 app = Flask('Imagine')
 app.secret_key = "super secret key"
 
-OUTPUT_PATH = 'datasets/img.jpg'
+OUTPUT_PATH = 'datasets/img'
 @app.route('/')
 def index():
     return render_template('main.html')
@@ -82,14 +83,14 @@ def selectImage():
 
 @app.route('/processImage', methods = ['POST'])
 def processImage():
-    try:
-        image = request.form['userImage']
-        response = urllib.request.urlopen(image)
-        with open(OUTPUT_PATH, 'wb') as f:
-            f.write(response.file.read())
-    except:
-        image = request.files['userImage']
-        image.save(OUTPUT_PATH)
+    if request.form.getlist('userImage[]'):
+        images = request.form.getlist('userImage[]')
+        for i in range(len(images)):
+            response = urllib.request.urlopen(images[i])
+            with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
+                f.write(response.file.read())
+    else:
+        flash.danger(messages.fileOrImageMissing)
     
     return render_template('processImage.html')
 
