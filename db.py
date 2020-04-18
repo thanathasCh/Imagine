@@ -1,4 +1,6 @@
 import pyodbc
+from model import Event, EventImage
+import datetime
 
 class Db:
     def __init__(self):
@@ -10,50 +12,66 @@ class Db:
         self.db = pyodbc.connect(self.CONNECTION_STRING)
 
     def getEvents(self):
-        query = """SELECT id, Name as eventName, CoverImageUrl as imageUrl, 
-                    Description as description, OrganizedDateTime as date
+        query = """SELECT id, Name as EventName, CoverImageUrl as CoverimageUrl, 
+                    Description as Description, OrganizedDateTime as Date
                     FROM Events """
-        
-        cursorSelect = self.db.execute(query)
-        # construct list of column names       
-        columnNames = [column[0] for column in cursorSelect.description]
-        fetchQuery = cursorSelect.fetchall()
-        
-        eventIds = [column[0] for column in fetchQuery] # construct list of eventId
 
-        data = {}
+        cursorSelect = self.db.execute(query)
+        fetchQuery = cursorSelect.fetchall()
+
+        data = []
         for i in range(len(fetchQuery)):
             tempEvent = [x for x in fetchQuery[i]]
-            data[eventIds[i]] = dict((zip(columnNames, tempEvent)))
+            data.append(Event(tempEvent[1], tempEvent[2], tempEvent[3],
+                              tempEvent[4], eventId=tempEvent[0]))
 
         cursorSelect.close()
         return data
 
     def getEventsById(self, id):
-        query = f"""SELECT id, Name as eventName, CoverImageUrl as imageUrl, 
-                    Description as description, OrganizedDateTime as date
+        query = f"""SELECT id, Name as EventName, CoverImageUrl as CoverImageUrl, 
+                    Description as Description, OrganizedDateTime as Date
                     FROM Events WHERE id = {id}"""
+        imageQuery = f"""SELECT imageUrl FROM Images WHERE EventId={id}"""
 
         cursorSelect = self.db.execute(query)
-        # construct list of column names       
-        columnNames = [column[0] for column in cursorSelect.description]
-        columnNames.append("imageUrl")
-        fetchQuery = cursorSelect.fetchall()
-        
-        eventIds = [column[0] for column in fetchQuery] # construct list of eventId
-        imageLists = []
-        # query imageUrl for each event
-        for i in eventIds:
-            imageQuery = f"""SELECT imageUrl FROM Images WHERE EventId={i}"""
-            cursorSelect = self.db.execute(imageQuery)
-            flattenImageUrl = [item for sublist in cursorSelect.fetchall() for item in sublist]
-            imageLists.append(flattenImageUrl)
+        fetchQuery = cursorSelect.fetchone()
 
-        data = {}
-        for i in range(len(fetchQuery)):
-            tempEvent = [x for x in fetchQuery[i]]
-            tempEvent.append(imageLists[i])
-            data[eventIds[i]] = dict((zip(columnNames, tempEvent)))
+        images = []
+        cursorSelect = self.db.execute(imageQuery)
+        flattenImageUrl = [item for sublist in cursorSelect.fetchall()
+                           for item in sublist]
+        images.extend(flattenImageUrl)
+
+        event = [x for x in fetchQuery]
+        model = EventImage(event[1], event[2], event[3],
+                           event[4], images, eventId=event[0])
 
         cursorSelect.close()
-        return data
+        return model
+
+    def getSeqNumber(self, eventId):
+        query = f'''SELECT COUNT(id) FROM Images where EventId = {eventId}'''
+        cursorSelect = self.db.execute(query).fetchval()
+        return cursorSelect
+
+    def createEvent(self, event: Event):
+        query = '''INSERT INTO Events (Name, Description,
+                OrganizedDateTime, CoverImageUrl)
+                VALUES (?, ?, ?, ?)'''
+
+        cursor = self.db.cursor()
+        cursor.execute(query, event.eventName, event.description,
+                       event.date, event.coverImageUrl)
+
+        self.db.commit()
+        return cursor.execute('select @@IDENTITY').fetchval()
+
+    def insertEventImage(self, eventId, imageUrls):
+        query = 'INSERT INTO IMAGES(ImageUrl, EventId) VALUES (?, ?)'
+        cursor = self.db.cursor()
+        for url in imageUrls:
+            cursor.execute(query, url, eventId)
+        self.db.commit()
+
+
