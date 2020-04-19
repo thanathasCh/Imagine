@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template, url_for
-# import numpy as np
 import data
 import messages
 import flash
@@ -17,6 +16,7 @@ app.secret_key = "super secret key"
 
 OUTPUT_PATH = 'datasets/img'
 BUCKET_NAME = 'eventimagefilter'
+db = Db()
 
 @app.route('/')
 def index():
@@ -54,7 +54,7 @@ def signCheck():
 # Event Page
 @app.route('/event')
 def event():
-    events = Db().getEvents()
+    events = db.getEvents()
     return render_template('event.html', events=events)
 
 @app.route('/addEvent')
@@ -76,9 +76,9 @@ def addEventSubmit():
         event = Event(name,coverImageUrl,description,date)
         eventId = Db().createEvent(event)
         imageUrls = upload_images_blob(BUCKET_NAME, files, imagePath,eventId)
-        Db().insertEventImage(eventId,imageUrls)
+        db.insertEventImage(eventId,imageUrls)
     
-        events = Db().getEvents()       
+        events = db.getEvents()       
 
     flash.info(messages.addEventSuccessful)
     return render_template('event.html', events=events)
@@ -109,17 +109,17 @@ def processImage():
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
-    event = Db().getEventsById(id)
+    event = db.getEventsById(id)
     return render_template('eventdetail.html', model=event)
 
 @app.route('/editEvent/<int:id>')
 def editEvent(id):
-    event = Db().getEventsById(id)
+    event = db.getEventsById(id)
     return render_template('editevent.html', model=event)
 
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):
-    event = Db().getEventsById(id)
+    event = db.getEventsById(id)
     return render_template('event.html', events=event)
 # end
 
