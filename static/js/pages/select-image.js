@@ -1,7 +1,7 @@
-var preview = document.querySelector('#user-gallery');
-var video = document.getElementById("vid-show"),
-    take = document.getElementById("vid-take"),
-    capturedImage = document.getElementById("capture-image"),
+var preview = $('#user-gallery');
+var video = $('#vid-show'),
+    take = $('#vid-take'),
+    capturedImage = $('#capture-image'),
     imageList = [];
 
 navigator.mediaDevices.getUserMedia({
