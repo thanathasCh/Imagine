@@ -22,7 +22,7 @@ def upload_images_blob(bucket_name, source_file_names, destination_blob_path, ev
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     urls = []
-    seq_number = Db().getSeqNumber(eventId)
+    seq_number = 0
     for image in source_file_names:
         seq_number += 1
 
