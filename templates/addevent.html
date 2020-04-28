@@ -8,7 +8,7 @@
             <h1 style="display: inline;">{{ title }}</h1>
         </div>
     </div>
-    <form id="eventForm" action="{{ url_for('addEventSubmit') }}" method="POST">
+    <form id="eventForm" action="{{ url_for('addEventSubmit') }}" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <div class="row">
                 <div class="col-12">
@@ -26,12 +26,26 @@
             </div><br>
             <div class="row">
                 <div class="col-12">
+                    <label>Poster Image</label>
+                </div>
+                <div class="col-6">
+                    <input id="poster-image" type="file" required accept="image/*" name="posterImage">
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="poster-gallery"></div>
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-12">
                     <label>Description (Not over 500 characters)</label>
                     <textarea class="form-control" maxlength="500" rows="5" 
                               name="description" form="eventForm"></textarea>
                 </div>
             </div><br>
             <div class="row">
+                <div class="col-12">
+                <label>Event Images</label>
+            </div>
                 <div class="col-12">
                     <input id="add-images" type="file" required multiple accept="image/*" name="eventImages">
                 </div>
@@ -48,4 +62,5 @@
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/shared/date-picker.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/pages/imageFiles.js') }}"></script>
+
 {% endblock %}

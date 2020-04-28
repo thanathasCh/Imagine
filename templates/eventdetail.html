@@ -10,10 +10,10 @@
                     <h1>{{ model['eventName'] }}</h1>
                 </div>
                 <div class="col-2">
-                    <button id="js-camera-activate" class="btn btn-primary" role="button">Find yourself!</button>
+                    <a class="btn btn-primary" role="button" href="{{ url_for('selectImage') }}">Find yourself!</a>
                 </div>
                 <div class="col-1">
-                    <a class="btn btn-outline-primary" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['id']) }}">
+                    <a class="btn btn-outline-primary" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['eventId']) }}">
                         Edit
                     </a>
                 </div>
@@ -21,19 +21,19 @@
             <label class="label label-info">{{ model['date'] }}</label>
         </div>
         <div class="row">
-            {% for i in range(model['images']|length) %}
+            {% for i in range(model['imageUrls']|length) %}
                 <div class="col-sm-3 col-md-3 mt-5">
-                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ model['images'][i] }}>
+                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ model['imageUrls'][i] }}>
                 </div>
             {% endfor %}
         </div>
     </div>
     {% include 'shared/_imageModal.html' %}
-    {% include 'shared/_cameraModal.html' %}
+
 </section>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/pages/image_modal.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/pages/camera_modal.js') }}"></script>
+
 
 {% endblock %}
 
