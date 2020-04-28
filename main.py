@@ -6,8 +6,6 @@ import os
 from db import Db
 import urllib
 from pathlib import Path
-
-# import storage
 from storage import upload_cover_blob, upload_images_blob
 from model import Event, EventImage
 
@@ -69,14 +67,16 @@ def addEventSubmit():
         date = request.form['date']
         poster = request.files['posterImage']
         files = request.files.getlist('eventImages')
+        
+        event = Event(name,description,date)
+        eventId = db.createEvent(event)
 
-        imagePath = f'''Event/{name}/Images'''
-        coverImagePath = f'''Event/{name}/CoverImages'''
-        coverImageUrl = upload_cover_blob(BUCKET_NAME, poster, coverImagePath)
-        event = Event(name,coverImageUrl,description,date)
-        eventId = Db().createEvent(event)
-        imageUrls = upload_images_blob(BUCKET_NAME, files, imagePath,eventId)
-        db.insertEventImage(eventId,imageUrls)
+        imagePath = f'Event/{eventId}/Images'
+        coverImagePath = f'Event/{eventId}/CoverImages'
+        coverImageUrl = upload_cover_blob(poster, coverImagePath, eventId)
+        imageUrls = upload_images_blob(files, imagePath, eventId)
+
+        db.insertEventImages(eventId, imageUrls, coverImageUrl)
     
         events = db.getEvents()       
 
