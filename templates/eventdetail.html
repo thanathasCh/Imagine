@@ -13,7 +13,7 @@
                     <a class="btn btn-primary" role="button" href="{{ url_for('selectImage') }}">Find yourself!</a>
                 </div>
                 <div class="col-1">
-                    <a class="btn btn-outline-primary" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['id']) }}">
+                    <a class="btn btn-outline-primary" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['eventId']) }}">
                         Edit
                     </a>
                 </div>
@@ -21,9 +21,9 @@
             <label class="label label-info">{{ model['date'] }}</label>
         </div>
         <div class="row">
-            {% for i in range(model['imageUrl']|length) %}
+            {% for i in range(model['imageUrls']|length) %}
                 <div class="col-sm-3 col-md-3 mt-5">
-                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ model['imageUrl'][i] }}>
+                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ model['imageUrls'][i] }}>
                 </div>
             {% endfor %}
         </div>

@@ -1,20 +1,22 @@
 import pyodbc
 from model import Event, EventImage
-import datetime
+import cv2
+import numpy as np
+from urllib import request
 
 class Db:
     def __init__(self):
-        self.CONNECTION_STRING = """Driver={ODBC Driver 17 for SQL Server};
-                                    Server=35.187.239.143;
+        self.CONNECTION_STRING = '''Driver={ODBC Driver 17 for SQL Server};
+                                    Server=localhost;
                                     Database=Imagine;
-                                    UID=sqlserver;
-                                    PWD=alexanderthegreat;"""
+                                    Trusted_Connection=yes'''
         self.db = pyodbc.connect(self.CONNECTION_STRING)
 
     def getEvents(self):
-        query = """SELECT id, Name as EventName, CoverImageUrl as CoverimageUrl, 
-                    Description as Description, OrganizedDateTime as Date
-                    FROM Events """
+        query = '''SELECT EventId, Name as EventName, ImageUrl as CoverImageUrl,
+                   Description as Description, OrganizedDateTime as Date
+                   FROM Events, Images
+                   WHERE EventId = Events.id AND ISCoverImage = 1'''
 
         cursorSelect = self.db.execute(query)
         fetchQuery = cursorSelect.fetchall()
@@ -22,17 +24,18 @@ class Db:
         data = []
         for i in range(len(fetchQuery)):
             tempEvent = [x for x in fetchQuery[i]]
-            data.append(Event(tempEvent[1], tempEvent[2], tempEvent[3],
-                              tempEvent[4], eventId=tempEvent[0]))
+            data.append(Event(tempEvent[1], tempEvent[3],tempEvent[4], 
+                              tempEvent[2], eventId=tempEvent[0]))
 
         cursorSelect.close()
         return data
 
     def getEventsById(self, id):
-        query = f"""SELECT id, Name as EventName, CoverImageUrl as CoverImageUrl, 
+        query = f'''SELECT Events.id, Name as EventName, ImageUrl as CoverImageUrl, 
                     Description as Description, OrganizedDateTime as Date
-                    FROM Events WHERE id = {id}"""
-        imageQuery = f"""SELECT imageUrl FROM Images WHERE EventId={id}"""
+                    FROM Events, Images 
+					WHERE Events.id = {id} and Events.id = EventId and IsCoverImage = 1'''
+        imageQuery = f'SELECT imageUrl FROM Images WHERE EventId={id}'
 
         cursorSelect = self.db.execute(query)
         fetchQuery = cursorSelect.fetchone()
@@ -50,28 +53,55 @@ class Db:
         cursorSelect.close()
         return model
 
-    def getSeqNumber(self, eventId):
-        query = f'''SELECT COUNT(id) FROM Images where EventId = {eventId}'''
+    def getImgSeqNumber(self, eventId):
+        query = f'SELECT COUNT(id) FROM Images where EventId = {eventId} AND IsCoverImage = 0'
+        cursorSelect = self.db.execute(query).fetchval()
+        return cursorSelect
+
+    def getCoverImgSeqNumber(self, eventId):
+        query = f'SELECT COUNT(id) FROM Images where EventId = {eventId} AND IsCoverImage = 1'
         cursorSelect = self.db.execute(query).fetchval()
         return cursorSelect
 
     def createEvent(self, event: Event):
         query = '''INSERT INTO Events (Name, Description,
-                OrganizedDateTime, CoverImageUrl)
-                VALUES (?, ?, ?, ?)'''
+                OrganizedDateTime)
+                VALUES (?, ?, ?)'''
 
         cursor = self.db.cursor()
         cursor.execute(query, event.eventName, event.description,
-                       event.date, event.coverImageUrl)
+                       event.date)
 
         self.db.commit()
         return cursor.execute('select @@IDENTITY').fetchval()
 
-    def insertEventImage(self, eventId, imageUrls):
-        query = 'INSERT INTO IMAGES(ImageUrl, EventId) VALUES (?, ?)'
+    def insertEventImages(self, eventId, imageUrls, coverImageUrl=None):
+        query = 'INSERT INTO IMAGES(ImageUrl, EventId, IsCoverImage) VALUES (?, ?, ?)'
         cursor = self.db.cursor()
+
+        cursor.execute(query, coverImageUrl, eventId, 1)
         for url in imageUrls:
-            cursor.execute(query, url, eventId)
+            cursor.execute(query, url, eventId, 0)
+
         self.db.commit()
 
+    def getImageUrl(self, imageId):
+        query = f'SELECT ImageUrl FROM Images WHERE id = {imageId}'
+        return self.db.execute(query).fetchval()
 
+    def getPreprocessedImages(self, eventId):
+        query = f'''SELECT PreprocessedImageUrl
+                    FROM Images, PreprocessedImage
+                    WHERE EventId = {eventId} and Images.id = PreprocessedImage.ImageId'''
+
+        cursorSelect = self.db.execute(query).fetchall()
+        preprocessedImages = []
+    
+        for url in cursorSelect:
+            reqImage = request.urlopen(url[0])
+            img = np.asarray(bytearray(reqImage.read()),dtype="uint8")
+            img = cv2.imdecode(img, -1)
+            preprocessedImages.append(img)
+
+        cursorSelect.close()
+        return preprocessedImages

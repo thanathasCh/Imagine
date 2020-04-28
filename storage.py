@@ -1,41 +1,36 @@
-from google.cloud import storage
+import pyrebase
 from db import Db
 
-def upload_cover_blob(bucket_name, source_file_name, destination_blob_path): 
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    destination_blob_name = f'''{destination_blob_path}/coverimg'''
-    blob = bucket.blob(destination_blob_name)
-    blob.upload_from_filename(source_file_name.filename)
-    blob.make_public()
+FIREBASE_CONFIG = {
+    "apiKey": "AIzaSyBWm3BStpa73uv9d45sLnYCyxQ6iOrlT5U",
+    "authDomain": "imagine-cab17.firebaseapp.com",
+    "databaseURL": "https://imagine-cab17.firebaseio.com",
+    "storageBucket": "imagine-cab17.appspot.com"
+}
 
-    print(
-        "File {} uploaded to {}.".format(
-            source_file_name.filename, destination_blob_name
-        )
-    )
+FIREBASE = pyrebase.initialize_app(FIREBASE_CONFIG)
+STORAGE_CLIENT = FIREBASE.storage()
+db = Db()
 
-    return blob.public_url
+def upload_cover_blob(source_file_name, destination_blob_path, eventId):
+    seq_number = db.getCoverImgSeqNumber(eventId) + 1
+    destination_blob_name = f'{destination_blob_path}/img{seq_number}.jpg'
+    uploaded_file_json = STORAGE_CLIENT.child(destination_blob_name).put(source_file_name.filename)
 
+    print(f'File {source_file_name.filename} uploaded to {destination_blob_name}.')
 
-def upload_images_blob(bucket_name, source_file_names, destination_blob_path, eventId):
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
+    return STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json['downloadTokens'])
+
+def upload_images_blob(source_file_names, destination_blob_path, eventId):
     urls = []
-    seq_number = 0
+    seq_number = db.getImgSeqNumber(eventId)
     for image in source_file_names:
         seq_number += 1
 
-        destination_blob_name = f'''{destination_blob_path}/img{seq_number}'''
-        blob = bucket.blob(destination_blob_name)
-        blob.upload_from_filename(image.filename)
-        blob.make_public()
-        urls.append(blob.public_url)
+        destination_blob_name = f'{destination_blob_path}/img{seq_number}.jpg'
+        uploaded_file_json = STORAGE_CLIENT.child(destination_blob_name).put(image.filename)
 
-        print(
-            "File {} uploaded to {}.".format(
-                image.filename, destination_blob_name
-            )
-        )
+        print(f'File {image.filename} uploaded to {destination_blob_name}.')
+        urls.append(STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json['downloadTokens']))
     
     return urls

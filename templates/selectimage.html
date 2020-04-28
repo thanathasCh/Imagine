@@ -1,6 +1,7 @@
 {% set title = 'Select Image' %}
 {% extends "shared/layout.html" %}
 {% block content %}
+
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
@@ -13,67 +14,29 @@
     <form id="selctForm" action="{{ url_for('processImage') }}" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <div class="row">
-                <div id="vid-controls"class="col-12">
-                    <label>Take a selfie</label>
+                <div class="col-12"><br>
+                    <video id="vid-show" width="480" height="360" autoplay></video>
                 </div>
-                <div class="col-12">
-                    <video id="vid-show" autoplay></video>
-                </div>
-                <div class="col-12">
-                    <input id="vid-take" type="button" value="Take Photo"/>
-                </div>
-                    <div id="vid-canvas"></div>
             </div><br>
             <div class="row">
                 <div class="col-12">
-                    <label> or select from your gallery</label>
+                    <label> Take a selfie:  </label>
+                    <input id="vid-take" type="button" value="Take Photo" />
                 </div>
-                <div class="col-6">
-                    <input id="user-image" type="file" accept="image/*" name="userImage">
+                <div class="col-12">
+                    <label> Or select from your gallery:  </label>
+                    <input id="user-image" type="file" multiple accept="image/*" onchange="previewFiles()"
+                        name="userImage">
                 </div>
                 <div class="row">
                     <div class="col-md-12" id="user-gallery"></div>
                 </div>
             </div><br>
-        <button id="confirm-button" type="submit" class="btn btn-primary btn-block"
-               >Done</button>
+            <button id="confirm-button" type="button" class="btn btn-primary btn-block">Done</button>
     </form>
-    
+
 </section>
 
-<!-- <script tpye="text/javascript" src="{{ url_for('static', filename='js/pages/captureImage.js') }}"></script> -->
+<script tpye="text/javascript" src="{{ url_for('static', filename='js/pages/select-image.js') }}"></script>
 
-
-<script>
-
-window.addEventListener("load", function(){
-    
-    var video = document.getElementById("vid-show"),
-        canvas = document.getElementById("vid-canvas"),
-        take = document.getElementById("vid-take"),
-        image;
-  
-    navigator.mediaDevices.getUserMedia({ video : true })
-    .then(function(stream) {
-      video.srcObject = stream;
-      video.play();
-  
-      take.addEventListener("click", function(){
-        var draw = document.createElement("canvas");
-        draw.width = video.videoWidth;
-        draw.height = video.videoHeight;
-        var context2D = draw.getContext("2d");
-        context2D.drawImage(video, 0, 0, video.videoWidth, video.videoHeight); 
-        
-        image = draw.toDataURL("image/jpg");
-        $.post( "/processImage", {
-            userImage: image
-        });
-      });
-    })
-    .catch(function(err) {
-      document.getElementById("vid-controls").innerHTML = "Please enable access and attach a camera";
-    });
-  });
-</script>
 {% endblock %}

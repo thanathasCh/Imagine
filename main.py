@@ -1,20 +1,20 @@
 from flask import Flask, request, render_template, url_for
-# import numpy as np
 import data
 import messages
 import flash
 import os
 from db import Db
 import urllib
-# import storage
+from pathlib import Path
 from storage import upload_cover_blob, upload_images_blob
 from model import Event, EventImage
 
 app = Flask('Imagine')
 app.secret_key = "super secret key"
 
-OUTPUT_PATH = 'datasets/img.jpg'
+OUTPUT_PATH = 'datasets/img'
 BUCKET_NAME = 'eventimagefilter'
+db = Db()
 
 @app.route('/')
 def index():
@@ -52,12 +52,7 @@ def signCheck():
 # Event Page
 @app.route('/event')
 def event():
-    events = []
-    data = Db().getEvents()
-    print(data)
-    for i in data:
-        events.append(i)
-    print(data[1])
+    events = db.getEvents()
     return render_template('event.html', events=events)
 
 @app.route('/addEvent')
@@ -73,22 +68,20 @@ def addEventSubmit():
         poster = request.files['posterImage']
         files = request.files.getlist('eventImages')
         
-        imagePath = f'''Event/{name}/Images'''
-        coverImagePath = f'''Event/{name}/CoverImages'''
-        coverImageUrl = upload_cover_blob(BUCKET_NAME, poster, coverImagePath)
-        event = Event(name,coverImageUrl,description,date)
-        eventId = Db().createEvent(event)
-        imageUrls = upload_images_blob(BUCKET_NAME, files, imagePath,eventId)
-        Db().insertEventImage(eventId,imageUrls)
+        event = Event(name,description,date)
+        eventId = db.createEvent(event)
+
+        imagePath = f'Event/{eventId}/Images'
+        coverImagePath = f'Event/{eventId}/CoverImages'
+        coverImageUrl = upload_cover_blob(poster, coverImagePath, eventId)
+        imageUrls = upload_images_blob(files, imagePath, eventId)
+
+        db.insertEventImages(eventId, imageUrls, coverImageUrl)
     
-        events = []
-        data = Db().getEvents()
-        for i in data:
-            events.append(i)
-        
+        events = db.getEvents()       
 
     flash.info(messages.addEventSuccessful)
-    return render_template('event.html', events=data.events)
+    return render_template('event.html', events=events)
 
 @app.route('/selectImage')
 def selectImage():
@@ -96,38 +89,38 @@ def selectImage():
 
 @app.route('/processImage', methods = ['POST'])
 def processImage():
-    try:
-        image = request.form['userImage']
-        response = urllib.request.urlopen(image)
-        with open(OUTPUT_PATH, 'wb') as f:
-            f.write(response.file.read())
-    except:
-        image = request.files['userImage']
-        image.save(OUTPUT_PATH)
+    root_dir = Path('./datasets')
+    items = root_dir.iterdir()
+    
+    for file in items:
+        if file.is_file():
+            os.remove(file)
+
+    if request.form.getlist('userImage[]'):
+        images = request.form.getlist('userImage[]')
+        for i in range(len(images)):
+            response = urllib.request.urlopen(images[i])
+            with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
+                f.write(response.file.read())
+    else:
+        flash.danger(messages.fileOrImageMissing)
     
     return render_template('processImage.html')
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
-    event = {}
-    data = Db().getEventsById(id)
-    for _,x in data.items():
-        event = x
+    event = db.getEventsById(id)
     return render_template('eventdetail.html', model=event)
 
 @app.route('/editEvent/<int:id>')
 def editEvent(id):
-    event = {}
-    data = Db().getEventsById(id)
-    for _,x in data.items():
-        event = x
+    event = db.getEventsById(id)
     return render_template('editevent.html', model=event)
 
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):
-    del data.events[id-1]
-    flash.success(messages.deleteSuccessful)
-    return render_template('event.html', events=data.events)
+    event = db.getEventsById(id)
+    return render_template('event.html', events=event)
 # end
 
 # Image Filter Page
