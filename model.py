@@ -15,3 +15,10 @@ class EventImage:
         self.date = date
         self.imageUrls = imageUrls
 
+class PreprocessedImage:
+    def __init__(self, preprocessedImageUrl, imageId, preprocessedImageId = 0):
+        self.imageId = imageId
+        self.preprocessedImageUrl = preprocessedImageUrl
+        self.preprocessedImageId = preprocessedImageId
+
+

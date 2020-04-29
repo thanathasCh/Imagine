@@ -1,5 +1,5 @@
 import pyodbc
-from model import Event, EventImage
+from model import Event, EventImage, PreprocessedImage
 import cv2
 import numpy as np
 from urllib import request
@@ -24,7 +24,7 @@ class Db:
         data = []
         for i in range(len(fetchQuery)):
             tempEvent = [x for x in fetchQuery[i]]
-            data.append(Event(tempEvent[1], tempEvent[3],tempEvent[4], 
+            data.append(Event(tempEvent[1], tempEvent[3], tempEvent[4],
                               tempEvent[2], eventId=tempEvent[0]))
 
         cursorSelect.close()
@@ -96,12 +96,21 @@ class Db:
 
         cursorSelect = self.db.execute(query).fetchall()
         preprocessedImages = []
-    
+
         for url in cursorSelect:
             reqImage = request.urlopen(url[0])
-            img = np.asarray(bytearray(reqImage.read()),dtype="uint8")
+            img = np.asarray(bytearray(reqImage.read()), dtype="uint8")
             img = cv2.imdecode(img, -1)
             preprocessedImages.append(img)
 
         cursorSelect.close()
         return preprocessedImages
+
+    def insertPreprocessedImages(self, preprocessedImages):
+        query = 'INSERT INTO PreprocessedImage(PreprocessedImageUrl, ImageId) VALUES (?, ?)'
+        cursor = self.db.cursor()
+
+        for image in preprocessedImages:
+            cursor.execute(query, image.preprocessedImageUrl, image.imageId)
+
+        self.db.commit()
