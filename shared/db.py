@@ -1,5 +1,5 @@
 import pyodbc
-from model import Event, EventImage
+from .model import Event, EventImage
 import cv2
 import numpy as np
 from urllib import request
@@ -7,7 +7,7 @@ from urllib import request
 class Db:
     def __init__(self):
         self.CONNECTION_STRING = '''Driver={ODBC Driver 17 for SQL Server};
-                                    Server=localhost;
+                                    Server=LAPTOP-4QQA0D0G\\SQLEXPRESS;
                                     Database=Imagine;
                                     Trusted_Connection=yes'''
         self.db = pyodbc.connect(self.CONNECTION_STRING)

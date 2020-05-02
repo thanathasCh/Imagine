@@ -5,6 +5,8 @@ signFailed = 'Sign In Failed.'
 deleteSuccessful = 'Delete Successful.'
 addEventSuccessful = 'Add Event Successfully.'
 fileOrImageMissing = 'Files or Images are missing.'
+missingField = 'Some fileds are missing.'
+passwordNotMatch = 'Password does not match.'
 
 error505 = 'Internal Error has occured.'
 error404 = 'This page is not finished yet!! GO BACK!!'

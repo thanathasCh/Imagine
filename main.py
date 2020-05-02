@@ -1,13 +1,17 @@
 from flask import Flask, request, render_template, url_for
-import data
-import messages
-import flash
+from wtforms import Form
+from shared import messages, flash
+from shared.db import Db
+from shared.storage import upload_cover_blob, upload_images_blob
+from shared.model import Event, EventImage
+# import messages
+# import flash
 import os
-from db import Db
+# from db import Db
 import urllib
 from pathlib import Path
-from storage import upload_cover_blob, upload_images_blob
-from model import Event, EventImage
+# from storage import upload_cover_blob, upload_images_blob
+# from model import Event, EventImage
 
 app = Flask('Imagine')
 app.secret_key = "super secret key"
