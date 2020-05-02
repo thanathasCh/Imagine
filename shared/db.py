@@ -1,7 +1,6 @@
 import pyodbc
 from .model import Event, EventImage
 import cv2
-import gc
 import numpy as np
 from urllib import request
 from passlib.hash import sha256_crypt

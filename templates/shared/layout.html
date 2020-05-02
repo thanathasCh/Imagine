@@ -56,10 +56,9 @@
                     {% endfor %}
                 {% endif %}
             {%  endwith %}
-
         </header>
         <div class="container-fluid" style="max-width: 1000px; margin: auto; margin-top: 10mm;">
-          {% if session['isLogin'] == True %}
+          {% if session['isLogin'] == True  or url_for(request.endpoint) == '/signup'%}
             {% block content %}{% endblock %}
           {% else %}
             {% include 'shared/loginRequired.html' %}
