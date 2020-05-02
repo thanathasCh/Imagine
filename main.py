@@ -1,10 +1,20 @@
-from flask import Flask, request, render_template, url_for
-import numpy as np
-import data
-import messages
-import flash
+from flask import Flask, request, render_template, url_for, session
+import os
+import urllib
+from pathlib import Path
+import gc
+
+from shared import messages, flash
+from shared.db import Db
+from shared.storage import upload_cover_blob, upload_images_blob
+from shared.model import Event, EventImage
 
 app = Flask('Imagine')
+app.secret_key = "super secret key"
+
+OUTPUT_PATH = 'datasets/img'
+BUCKET_NAME = 'eventimagefilter'
+db = Db()
 
 @app.route('/')
 def index():
@@ -15,12 +25,21 @@ def index():
 def login():
     username = request.form['username']
     password = request.form['password']
-    
-    if username == 'admin':
+
+    if db.login(username, password):
         flash.success(messages.loginSuccessful)
+        session['isLogin'] = True
+        session['username'] = username
     else:
-        flash.danger(messages.loginSuccessful)
+        flash.danger(messages.loginFailed)
     
+    return render_template('main.html')
+
+@app.route('/logout')
+def logout():
+    session['isLogin'] = False
+    session['username'] = ""
+
     return render_template('main.html')
 
 @app.route('/signup')
@@ -31,18 +50,31 @@ def signup():
 def signCheck():
     username = request.form['username']
     password = request.form['password']
+    confirmPassword = request.form['confirmPassword']
     firstName = request.form['firstName']
     lastName = request.form['lastName']
 
-    flash.success(messages.signSuccessful)
-    return render_template('main.html')
+    if not username and not password and not firstName and not lastName:
+        flash.danger(messages.missingFields)
+        return render_template('signup.html')
+    elif password != confirmPassword:
+        flash.danger(messages.passwordNotMatch)
+        return render_template('signup.html')
+    elif db.isUserNameDuplicated(username):
+        flash.danger(messages.duplicateUsername)
+        return render_template('signup.html')
+    else:
+        db.signup(firstName, lastName, username, password)
+        flash.success(messages.signSuccessful)
+        return render_template('main.html')
     
 # end
 
 # Event Page
 @app.route('/event')
 def event():
-    return render_template('event.html', events=data.events)
+    events = db.getEvents()
+    return render_template('event.html', events=events)
 
 @app.route('/addEvent')
 def addEvent():
@@ -54,38 +86,62 @@ def addEventSubmit():
         name = request.form['eventname']
         description = request.form['description']
         date = request.form['date']
-        images = request.files['eventImages']
+        poster = request.files['posterImage']
+        files = request.files.getlist('eventImages')
+        
+        event = Event(name,description,date)
+        eventId = db.createEvent(event)
 
-        model = {
-            'id': len(data.events),
-            'eventName': name,
-            'description': description,
-            'date': date
-        }
+        imagePath = f'Event/{eventId}/Images'
+        coverImagePath = f'Event/{eventId}/CoverImages'
+        coverImageUrl = upload_cover_blob(poster, coverImagePath, eventId)
+        imageUrls = upload_images_blob(files, imagePath, eventId)
 
-        data.events.append(model)
+        db.insertEventImages(eventId, imageUrls, coverImageUrl)
+    
+        events = db.getEvents()       
 
-        # if request.files:
-        #     print(request.files['eventImages'])
-        #     return 'done'
-        # return('halfly done')
+    flash.info(messages.addEventSuccessful)
+    return render_template('event.html', events=events)
 
-    flash('Add Event Successfully', 'info')
-    return render_template('event.html', events=data.events)
+@app.route('/selectImage')
+def selectImage():
+    return render_template('selectimage.html')
+
+@app.route('/processImage', methods = ['POST'])
+def processImage():
+    root_dir = Path('./datasets')
+    items = root_dir.iterdir()
+    
+    for file in items:
+        if file.is_file():
+            os.remove(file)
+
+    if request.form.getlist('userImage[]'):
+        images = request.form.getlist('userImage[]')
+        for i in range(len(images)):
+            response = urllib.request.urlopen(images[i])
+            with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
+                f.write(response.file.read())
+    else:
+        flash.danger(messages.fileOrImageMissing)
+    
+    return render_template('processImage.html')
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
-    return render_template('eventdetail.html', model=data.events[id-1])
+    event = db.getEventsById(id)
+    return render_template('eventdetail.html', model=event)
 
 @app.route('/editEvent/<int:id>')
 def editEvent(id):
-    return render_template('editevent.html', model=data.events[id-1])
+    event = db.getEventsById(id)
+    return render_template('editevent.html', model=event)
 
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):
-    del data.events[id-1]
-    flash.success(messages.deleteSuccessful)
-    return render_template('event.html', events=data.events)
+    event = db.getEventsById(id)
+    return render_template('event.html', events=event)
 # end
 
 # Image Filter Page
@@ -112,4 +168,4 @@ if __name__ == '__main__':
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.debug = True
-    app.run()
+    app.run(debug=True)

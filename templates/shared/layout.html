@@ -22,17 +22,27 @@
                     <li><a class="nav-link" href={{ url_for('index') }}>Home</a></li>
                     <li><a class="nav-link" href={{ url_for('event') }}>Events</a></li>
                   </ul>
+                  
+                  
 
-                  <form class="nav-form navbar-right form-inline my-2 my-lg-0" action={{ url_for('login') }} method="POST">
-                    <div class="form-group">
-                        <input type="text" class="form-control mr-2" placeholder="Enter Username"
-                               required name="username">
-                        <input type="password" class="form-control mr-2" placeholder="Password"
-                               required name="password">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <a class="btn btn-default" role="button" href="/signup">Sing in</a>
-                  </form>
+                  {% if session['isLogin'] == True %}
+                  <div class="navbar my-2 my-lg-0">
+                    <p class="lead mr-3 font-weight-bold">Welcome! {{ session['username'] }}</p>
+                    <a class="btn btn-danger" role="button" href="/logout">Logout</a>
+                  </div>
+                  {% else %}
+                    <form class="nav-form navbar-right form-inline my-2 my-lg-0" action={{ url_for('login') }} method="POST">
+                      <div class="form-group">
+                          <input type="text" class="form-control mr-2" placeholder="Enter Username"
+                                required name="username">
+                          <input type="password" class="form-control mr-2" placeholder="Password"
+                                required name="password">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Login</button>
+                      <a class="btn btn-default" role="button" href="/signup">Sing in</a>
+                    </form>
+                  {% endif %}
+
                 </div>
               </nav>
             <!-- Flash Message -->
@@ -49,7 +59,11 @@
 
         </header>
         <div class="container-fluid" style="max-width: 1000px; margin: auto; margin-top: 10mm;">
+          {% if session['isLogin'] == True %}
             {% block content %}{% endblock %}
+          {% else %}
+            {% include 'shared/loginRequired.html' %}
+          {% endif %}
         </div>
     </body>
 </html>

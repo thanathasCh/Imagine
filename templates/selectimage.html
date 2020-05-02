@@ -1,0 +1,42 @@
+{% set title = 'Select Image' %}
+{% extends "shared/layout.html" %}
+{% block content %}
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<section>
+    <div class="panel-group">
+        <div class="block block--underline">
+            <h1 style="display: inline;">{{ title }}</h1>
+        </div>
+    </div>
+    <form id="selctForm" action="{{ url_for('processImage') }}" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-12"><br>
+                    <video id="vid-show" width="480" height="360" autoplay></video>
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col-12">
+                    <label> Take a selfie:  </label>
+                    <input id="vid-take" type="button" value="Take Photo" />
+                </div>
+                <div class="col-12">
+                    <label> Or select from your gallery:  </label>
+                    <input id="user-image" type="file" multiple accept="image/*" onchange="previewFiles()"
+                        name="userImage">
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="user-gallery"></div>
+                </div>
+            </div><br>
+            <button id="confirm-button" type="button" class="btn btn-primary btn-block">Done</button>
+    </form>
+
+</section>
+
+<script tpye="text/javascript" src="{{ url_for('static', filename='js/pages/select-image.js') }}"></script>
+
+{% endblock %}

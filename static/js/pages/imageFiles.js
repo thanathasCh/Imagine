@@ -1,4 +1,5 @@
 let fileImages = $('#add-images');
+let posterImage = $('#poster-image');
 
 $(document).ready(function() {
     fileImages.change(function() {

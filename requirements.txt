@@ -1,3 +1,8 @@
-Flask==0.11.1
+Flask==1.0
 gunicorn==19.6.0
 numpy==1.11.2
+pyodbc==4.0.30
+opencv==3.4.2
+pyrebase==3.0.27
+urllib3==1.25.8
+passlib== 1.7.2
