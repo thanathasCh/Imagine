@@ -1,8 +1,10 @@
 import pyodbc
 from .model import Event, EventImage
 import cv2
+import gc
 import numpy as np
 from urllib import request
+from passlib.hash import sha256_crypt
 
 class Db:
     def __init__(self):
@@ -105,3 +107,33 @@ class Db:
 
         cursorSelect.close()
         return preprocessedImages
+
+    def isUserNameDuplicated(self, username):
+        query = '''SELECT *
+                   FROM Users
+                   WHERE Users.UserName = ?'''
+
+        cursorSelect = self.db.execute(query, username)
+        return len(list(cursorSelect)) > 0
+
+    def login(self, username, password):
+        query = '''SELECT Password
+                   FROM Users
+                   WHERE Users.UserName = ?'''
+        
+        cursorSelect = self.db.execute(query, username)
+        data = list(cursorSelect)
+
+        if not data:
+            return False
+        else:
+            return sha256_crypt.verify(password, data[0][0])        
+
+    def signup(self, firstName, lastName, username, password):
+        query = '''INSERT INTO Users 
+                   (FirstName, LastName, Username, Password)
+                   VALUES
+                   (?, ?, ?, ?)'''
+
+        self.db.execute(query, firstName, lastName, username, sha256_crypt.encrypt(password))
+        self.db.commit()
