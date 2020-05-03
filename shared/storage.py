@@ -1,5 +1,5 @@
 import pyrebase
-from db import Db
+from .db import Db
 
 FIREBASE_CONFIG = {
     "apiKey": "AIzaSyBWm3BStpa73uv9d45sLnYCyxQ6iOrlT5U",

@@ -1,13 +1,14 @@
 import pyodbc
-from model import Event, EventImage, PreprocessedImage
+from .model import Event, EventImage, PreprocessedImage
 import cv2
 import numpy as np
 from urllib import request
+from passlib.hash import sha256_crypt
 
 class Db:
     def __init__(self):
         self.CONNECTION_STRING = '''Driver={ODBC Driver 17 for SQL Server};
-                                    Server=localhost;
+                                    Server=LAPTOP-4QQA0D0G\\SQLEXPRESS;
                                     Database=Imagine;
                                     Trusted_Connection=yes'''
         self.db = pyodbc.connect(self.CONNECTION_STRING)
@@ -113,4 +114,40 @@ class Db:
         for image in preprocessedImages:
             cursor.execute(query, image.preprocessedImageUrl, image.imageId)
 
+        self.db.commit()
+
+    def isUserNameDuplicated(self, username):
+        query = '''SELECT *
+                   FROM Users
+                   WHERE Users.UserName = ?'''
+
+        cursorSelect = self.db.execute(query, username)
+        return len(list(cursorSelect)) > 0
+
+    def login(self, username, password):
+        query = '''SELECT Password
+                   FROM Users
+                   WHERE Users.UserName = ?'''
+        
+        cursorSelect = self.db.execute(query, username)
+        data = list(cursorSelect)
+
+        if not data:
+            return False
+        else:
+            return sha256_crypt.verify(password, data[0][0])        
+
+    def signup(self, firstName, lastName, username, password):
+        query = '''INSERT INTO Users 
+                   (FirstName, LastName, Username, Password)
+                   VALUES
+                   (?, ?, ?, ?)'''
+
+        self.db.execute(query, firstName, lastName, username, sha256_crypt.encrypt(password))
+        self.db.commit()
+
+    def deleteEvent(self, id):
+        query = 'DELETE FROM Events WHERE Id = ?'
+
+        self.db.execute(query, id)
         self.db.commit()

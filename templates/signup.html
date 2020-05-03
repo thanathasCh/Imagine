@@ -1,5 +1,5 @@
 {% set title = 'Sign up' %}
-{% extends "shared/layout.html" %}
+{% extends "shared/_layout.html" %}
 {% block content %}
 
 <section>
@@ -9,13 +9,13 @@
         </div>
     </div>
     <form action="{{ url_for('signCheck') }}" method="POST">
-        <div class="row">
-            <div class="col-6">
+        <div class="row ">
+            <div class="col-6 form-group">
                 <label>First Name</label>
                 <input id="firstName" type="text" class="form-control"
                         name="firstName" required>
             </div>
-            <div class="col-6">
+            <div class="col-6 form-group">
                 <label>Last Name</label>
                 <input id="lastName" type="text" class="form-control"
                         name="lastName" required>
@@ -23,18 +23,23 @@
         </div>
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 form-group">
                 <label>Username</label>
                 <input id="username" type="text" class="form-control" 
-                        name="eventname" placeholder="Enter your username" required>
+                        name="username" placeholder="Enter your username" required>
             </div>
-            <div class="col-12">
+            <div class="col-12 form-group">
                 <label>Password</label>
                 <input id="password" type="password" class="form-control"
                         name="password" placeholder="Enter your password" required>
-        </div>
+            </div>
+            <div class="col-12 form-group">
+                <label>Confirm Password</label>
+                <input id="confirmPassword" type="password" class="form-control"
+                        name="confirmPassword" placeholder="Enter your password again" required>
+            </div>
             </div><br>
-            <div class="col-12">
+            <div class="col-12 form-group">
                 <button type="submit" class="btn btn-primary btn-block">Sign up</button>
             </div>
         </div>

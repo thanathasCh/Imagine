@@ -7,6 +7,8 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename='js/shared/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/shared/bootstrap.min.js') }}"></script>
+        <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+        <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
 
@@ -22,17 +24,27 @@
                     <li><a class="nav-link" href={{ url_for('index') }}>Home</a></li>
                     <li><a class="nav-link" href={{ url_for('event') }}>Events</a></li>
                   </ul>
+                  
+                  
 
-                  <form class="nav-form navbar-right form-inline my-2 my-lg-0" action={{ url_for('login') }} method="POST">
-                    <div class="form-group">
-                        <input type="text" class="form-control mr-2" placeholder="Enter Username"
-                               required name="username">
-                        <input type="password" class="form-control mr-2" placeholder="Password"
-                               required name="password">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <a class="btn btn-default" role="button" href="/signup">Sing in</a>
-                  </form>
+                  {% if session['isLogin'] == True %}
+                  <div class="navbar my-2 my-lg-0">
+                    <p class="lead mr-3 font-weight-bold">Welcome! {{ session['username'] }}</p>
+                    <a class="btn btn-danger" role="button" href="/logout">Logout</a>
+                  </div>
+                  {% else %}
+                    <form class="nav-form navbar-right form-inline my-2 my-lg-0" action={{ url_for('login') }} method="POST">
+                      <div class="form-group">
+                          <input type="text" class="form-control mr-2" placeholder="Enter Username"
+                                required name="username">
+                          <input type="password" class="form-control mr-2" placeholder="Password"
+                                required name="password">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Login</button>
+                      <a class="btn btn-default" role="button" href="/signup">Sing in</a>
+                    </form>
+                  {% endif %}
+
                 </div>
               </nav>
             <!-- Flash Message -->
@@ -46,10 +58,16 @@
                     {% endfor %}
                 {% endif %}
             {%  endwith %}
-
         </header>
         <div class="container-fluid" style="max-width: 1000px; margin: auto; margin-top: 10mm;">
+          {% if session['isLogin'] == True  or url_for(request.endpoint) == '/signup'%}
             {% block content %}{% endblock %}
+          {% else %}
+            {% include 'shared/loginRequired.html' %}
+          {% endif %}
         </div>
     </body>
+
+    <input id="is-admin" value="{{ session['isAdmin'] }}" hidden>
+    <script tpye="text/javascript" src="{{ url_for('static', filename='js/shared/restricted-control.js') }}"></script>
 </html>

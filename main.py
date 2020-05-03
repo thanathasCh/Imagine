@@ -1,13 +1,13 @@
-from flask import Flask, request, render_template, url_for
-import data
-import messages
-import flash
+from flask import Flask, request, render_template, url_for, session, redirect
 import os
-from db import Db
 import urllib
 from pathlib import Path
-from storage import upload_cover_blob, upload_images_blob
-from model import Event, EventImage
+import gc
+
+from shared import messages, flash
+from shared.db import Db
+from shared.storage import upload_cover_blob, upload_images_blob
+from shared.model import Event, EventImage
 
 app = Flask('Imagine')
 app.secret_key = "super secret key"
@@ -20,17 +20,27 @@ db = Db()
 def index():
     return render_template('main.html')
 
-# Login Page
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
-    
-    if username == 'admin':
+
+    if db.login(username, password):
         flash.success(messages.loginSuccessful)
+        session['isLogin'] = True
+        session['username'] = username
+        session['isAdmin'] = True if username == 'admin' else False
     else:
-        flash.danger(messages.loginSuccessful)
+        flash.danger(messages.loginFailed)
     
+    return render_template('main.html')
+
+@app.route('/logout')
+def logout():
+    session['isLogin'] = False
+    session['username'] = ""
+    session['isAdmin'] = False
+
     return render_template('main.html')
 
 @app.route('/signup')
@@ -41,15 +51,24 @@ def signup():
 def signCheck():
     username = request.form['username']
     password = request.form['password']
+    confirmPassword = request.form['confirmPassword']
     firstName = request.form['firstName']
     lastName = request.form['lastName']
 
-    flash.success(messages.signSuccessful)
-    return render_template('main.html')
+    if not username and not password and not firstName and not lastName:
+        flash.danger(messages.missingFields)
+        return render_template('signup.html')
+    elif password != confirmPassword:
+        flash.danger(messages.passwordNotMatch)
+        return render_template('signup.html')
+    elif db.isUserNameDuplicated(username):
+        flash.danger(messages.duplicateUsername)
+        return render_template('signup.html')
+    else:
+        db.signup(firstName, lastName, username, password)
+        flash.success(messages.signSuccessful)
+        return render_template('main.html')
     
-# end
-
-# Event Page
 @app.route('/event')
 def event():
     events = db.getEvents()
@@ -117,22 +136,22 @@ def editEvent(id):
     event = db.getEventsById(id)
     return render_template('editevent.html', model=event)
 
+@app.route('/editEventSubmit', methods=['POST'])
+def editEventSubmit():
+    return redirect(url_for('event'))
+
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):
-    event = db.getEventsById(id)
-    return render_template('event.html', events=event)
-# end
+    db.deleteEvent(id)
+    return redirect(url_for('event'))
 
-# Image Filter Page
 @app.route('/ImageFilter')
 def imageFilter():
     return render_template('imageFilter.html')
 
 def returnResult():
     pass
-# end
 
-# Error Pages
 @app.errorhandler(404)
 def page_not_found(e):
     return messages.error404
@@ -140,8 +159,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_error(e):
     return messages.error505
-# end
-
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'

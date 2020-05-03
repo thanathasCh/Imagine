@@ -1,8 +1,5 @@
 $(document).ready(function() {
-    $('#date-picker').datetimepicker({
-        timepicker: false,
-        datepicker: true,
-        format: 'm/d/yy'
+    $('#datepicker').datepicker({
+        uiLibrary: 'bootstrap4'
     });
-    $('#date-picker').datetimepicker('setDate', 'today');
 })
