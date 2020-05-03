@@ -1,5 +1,5 @@
 {% set title = 'Add Event' %}
-{% extends "shared/layout.html" %}
+{% extends "shared/_layout.html" %}
 {% block content %}
 
 <section>
@@ -9,53 +9,7 @@
         </div>
     </div>
     <form id="eventForm" action="{{ url_for('addEventSubmit') }}" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            <div class="row">
-                <div class="col-12">
-                    <label>Event Name</label>
-                    <input id="event-name" type="text" class="form-control" placeholder="Enter Event Name" 
-                        required name="eventname">
-                </div>
-            </div><br>
-            <div class="row">
-                <div class="col-6">
-                    <label>Date</label>
-                    <input id="date-picker" class="form-control" name="date"
-                        type="text" autocomplete="off">
-                </div>
-            </div><br>
-            <div class="row">
-                <div class="col-12">
-                    <label>Poster Image</label>
-                </div>
-                <div class="col-6">
-                    <input id="poster-image" type="file" required accept="image/*" name="posterImage">
-                </div>
-                <div class="row">
-                    <div class="col-md-12" id="poster-gallery"></div>
-                </div>
-            </div><br>
-            <div class="row">
-                <div class="col-12">
-                    <label>Description (Not over 500 characters)</label>
-                    <textarea class="form-control" maxlength="500" rows="5" 
-                              name="description" form="eventForm"></textarea>
-                </div>
-            </div><br>
-            <div class="row">
-                <div class="col-12">
-                <label>Event Images</label>
-            </div>
-                <div class="col-12">
-                    <input id="add-images" type="file" required multiple accept="image/*" name="eventImages">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12" id="image-gallery"></div>
-            </div>
-        </div>
-        <button id="confirm-modal" type="submit" class="btn btn-primary btn-block"
-                data-toggle="modal" data-target="#confirm_modal">Add</button>
+        {% include 'shared/_eventForm.html' %}
     </form>
     
 </section>

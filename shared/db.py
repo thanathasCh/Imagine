@@ -136,3 +136,9 @@ class Db:
 
         self.db.execute(query, firstName, lastName, username, sha256_crypt.encrypt(password))
         self.db.commit()
+
+    def deleteEvent(self, id):
+        query = 'DELETE FROM Events WHERE Id = ?'
+
+        self.db.execute(query, id)
+        self.db.commit()

@@ -1,5 +1,5 @@
 {% set title = 'Events' %}
-{% extends "shared/layout.html" %}
+{% extends "shared/_layout.html" %}
 {% block content %}
 
 <section>
@@ -26,6 +26,8 @@
                                role="button">
                                Edit
                             </a>
+                            <a class="btn text-danger" href="{{ url_for('deleteEvent', id=item['eventId']) }}" 
+                               role="button">Delete</span></a>
                         </p>
                     </div>
                 </div>
