@@ -67,4 +67,7 @@
           {% endif %}
         </div>
     </body>
+
+    <input id="is-admin" value="{{ session['isAdmin'] }}" hidden>
+    <script tpye="text/javascript" src="{{ url_for('static', filename='js/shared/restricted-control.js') }}"></script>
 </html>

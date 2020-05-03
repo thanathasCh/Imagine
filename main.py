@@ -29,6 +29,7 @@ def login():
         flash.success(messages.loginSuccessful)
         session['isLogin'] = True
         session['username'] = username
+        session['isAdmin'] = True if username == 'admin' else False
     else:
         flash.danger(messages.loginFailed)
     
@@ -38,6 +39,7 @@ def login():
 def logout():
     session['isLogin'] = False
     session['username'] = ""
+    session['isAdmin'] = False
 
     return render_template('main.html')
 
@@ -157,7 +159,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_error(e):
     return messages.error505
-
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
