@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for, session
+from flask import Flask, request, render_template, url_for, session, redirect
 import os
 import urllib
 from pathlib import Path
@@ -20,7 +20,6 @@ db = Db()
 def index():
     return render_template('main.html')
 
-# Login Page
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
@@ -30,6 +29,7 @@ def login():
         flash.success(messages.loginSuccessful)
         session['isLogin'] = True
         session['username'] = username
+        session['isAdmin'] = True if username == 'admin' else False
     else:
         flash.danger(messages.loginFailed)
     
@@ -39,6 +39,7 @@ def login():
 def logout():
     session['isLogin'] = False
     session['username'] = ""
+    session['isAdmin'] = False
 
     return render_template('main.html')
 
@@ -68,9 +69,6 @@ def signCheck():
         flash.success(messages.signSuccessful)
         return render_template('main.html')
     
-# end
-
-# Event Page
 @app.route('/event')
 def event():
     events = db.getEvents()
@@ -138,22 +136,22 @@ def editEvent(id):
     event = db.getEventsById(id)
     return render_template('editevent.html', model=event)
 
+@app.route('/editEventSubmit', methods=['POST'])
+def editEventSubmit():
+    return redirect(url_for('event'))
+
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):
-    event = db.getEventsById(id)
-    return render_template('event.html', events=event)
-# end
+    db.deleteEvent(id)
+    return redirect(url_for('event'))
 
-# Image Filter Page
 @app.route('/ImageFilter')
 def imageFilter():
     return render_template('imageFilter.html')
 
 def returnResult():
     pass
-# end
 
-# Error Pages
 @app.errorhandler(404)
 def page_not_found(e):
     return messages.error404
@@ -161,8 +159,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_error(e):
     return messages.error505
-# end
-
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'

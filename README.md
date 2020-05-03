@@ -82,7 +82,7 @@ If you want to add new html page, you will have to put content block to import r
 
 ````
 {% set title = 'Page Name' %}   <-- Add page name over here
-{% extends "shared/layout.html" %}
+{% extends "shared/_layout.html" %}
 {% block content %}
 
 html body
