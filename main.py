@@ -84,6 +84,7 @@ def addEventSubmit():
         name = request.form['eventname']
         description = request.form['description']
         date = request.form['date']
+        print(date)
         poster = request.files['posterImage']
         files = request.files.getlist('eventImages')
         
