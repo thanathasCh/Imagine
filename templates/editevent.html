@@ -1,6 +1,20 @@
 {% set title = 'Event Detail' %}
-{% extends "shared/layout.html" %}
+{% extends "shared/_layout.html" %}
 {% block content %}
 
+<section>
+    <div class="panel-group">
+        <div class="block block--underline">
+            <h1 style="display: inline;">{{ title }}</h1>
+        </div>
+    </div>
+    <form id="eventForm" action="{{ url_for('editEventSubmit') }}" method="POST" enctype="multipart/form-data">
+        {% include 'shared/_eventForm.html' %}
+    </form>
+    
+</section>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/shared/date-picker.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/pages/imageFiles.js') }}"></script>
 
 {% endblock %}

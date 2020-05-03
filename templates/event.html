@@ -1,12 +1,12 @@
 {% set title = 'Events' %}
-{% extends "shared/layout.html" %}
+{% extends "shared/_layout.html" %}
 {% block content %}
 
 <section>
     <div class="panel-group">
         <div class="block block--underline">
             <h1 style="display: inline;">{{ title }}</h1>
-            <a class="btn btn-primary" style="float: right;" role="button" href="{{ url_for('addEvent') }}">Add Event</a>
+            <a class="btn btn-primary restricted-content" style="float: right;" role="button" href="{{ url_for('addEvent') }}">Add Event</a>
         </div>
     </div><br>
     <div class="row">
@@ -22,10 +22,12 @@
                                role="button">
                                View
                             </a>
-                            <a class="btn btn-default" href="{{ url_for('editEvent', id=item['eventId']) }}" 
+                            <a class="btn btn-default restricted-content" href="{{ url_for('editEvent', id=item['eventId']) }}" 
                                role="button">
                                Edit
                             </a>
+                            <a class="btn text-danger restricted-content" href="{{ url_for('deleteEvent', id=item['eventId']) }}" 
+                               role="button">Delete</span></a>
                         </p>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 {% set title = 'Event Detail' %}
-{% extends "shared/layout.html" %}
+{% extends "shared/_layout.html" %}
 {% block content %}
 
 <section>
@@ -13,7 +13,7 @@
                     <a class="btn btn-primary" role="button" href="{{ url_for('selectImage') }}">Find yourself!</a>
                 </div>
                 <div class="col-1">
-                    <a class="btn btn-outline-primary" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['eventId']) }}">
+                    <a class="btn btn-outline-primary restricted-content" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['eventId']) }}">
                         Edit
                     </a>
                 </div>

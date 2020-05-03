@@ -1,0 +1,50 @@
+<div class="form-group">
+    <div class="row">
+        <div class="col-12 form-group">
+            <label>Event Name</label>
+            <input id="event-name" type="text" class="form-control" placeholder="Enter Event Name" 
+                required name="eventname">
+        </div>
+    </div><br>
+    <div class="row">
+        <div class="col-6 form-group">
+            <label>Date</label>
+            <input id="datepicker" class="form-control" type="text" autocomplete="off" name="date">
+        </div>
+    </div><br>
+    <div class="row">
+        <div class="col-12 form-group">
+            <label>Poster Image</label>
+        </div>
+        <div class="col-6 form-group">
+            <input id="poster-image" type="file" required accept="image/*" name="posterImage">
+        </div>
+        <div class="row">
+            <div class="col-md-12" id="poster-gallery"></div>
+        </div>
+    </div><br>
+    <div class="row">
+        <div class="col-12 form-group">
+            <label>Description (Not over 500 characters)</label>
+            <textarea class="form-control" maxlength="500" rows="5" 
+                      name="description" form="eventForm"></textarea>
+        </div>
+    </div><br>
+    <div class="row">
+        <div class="col-12 form-group">
+        <label>Event Images</label>
+    </div>
+        <div class="col-12 form-group">
+            <input id="add-images" type="file" required multiple accept="image/*" name="eventImages">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" id="image-gallery"></div>
+    </div>
+</div>
+<div class="block__action container">
+    <div class="block__action-row">
+        <button type="submit" class="btn btn-primary btn-block">Save</button>
+        <a class="btn btn-default btn-block" href="/event">Cancel</a>
+    </div>
+</div>
