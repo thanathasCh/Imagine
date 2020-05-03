@@ -15,8 +15,8 @@ db = Db()
 def upload_cover_blob(source_file_name, destination_blob_path, eventId):
     seq_number = db.getCoverImgSeqNumber(eventId) + 1
     destination_blob_name = f'{destination_blob_path}/img{seq_number}.jpg'
-    uploaded_file_json = STORAGE_CLIENT.child(destination_blob_name).put(source_file_name.filename)
-
+    uploaded_file_json = STORAGE_CLIENT.child(destination_blob_name).put(source_file_name)
+    print(source_file_name)
     print(f'File {source_file_name.filename} uploaded to {destination_blob_name}.')
 
     return STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json['downloadTokens'])
@@ -28,8 +28,8 @@ def upload_images_blob(source_file_names, destination_blob_path, eventId):
         seq_number += 1
 
         destination_blob_name = f'{destination_blob_path}/img{seq_number}.jpg'
-        uploaded_file_json = STORAGE_CLIENT.child(destination_blob_name).put(image.filename)
-
+        uploaded_file_json = STORAGE_CLIENT.child(destination_blob_name).put(image)
+        print(image)
         print(f'File {image.filename} uploaded to {destination_blob_name}.')
         urls.append(STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json['downloadTokens']))
     
