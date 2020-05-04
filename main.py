@@ -6,7 +6,7 @@ import gc
 
 from shared import messages, flash
 from shared.db import Db
-from shared.storage import upload_cover_blob, upload_images_blob
+from shared.storage import Storage
 from shared.model import Event, EventImage
 
 app = Flask('Imagine')
@@ -15,6 +15,7 @@ app.secret_key = "super secret key"
 OUTPUT_PATH = 'datasets/img'
 BUCKET_NAME = 'eventimagefilter'
 db = Db()
+storage = Storage()
 
 @app.route('/')
 def index():
@@ -92,8 +93,8 @@ def addEventSubmit():
 
         imagePath = f'Event/{eventId}/Images'
         coverImagePath = f'Event/{eventId}/CoverImages'
-        coverImageUrl = upload_cover_blob(poster, coverImagePath, eventId)
-        imageUrls = upload_images_blob(files, imagePath, eventId)
+        coverImageUrl = storage.upload_cover_blob(poster, coverImagePath, eventId)
+        imageUrls = storage.upload_images_blob(files, imagePath, eventId)
 
         db.insertEventImages(eventId, imageUrls, coverImageUrl)
     

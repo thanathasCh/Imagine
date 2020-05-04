@@ -7,11 +7,13 @@ from passlib.hash import sha256_crypt
 
 class Db:
     def __init__(self):
+        print('[INFO] Initializing Database Connection')
         self.CONNECTION_STRING = '''Driver={ODBC Driver 17 for SQL Server};
-                                    Server=localhost;
+                                    Server=LAPTOP-4QQA0D0G\\SQLEXPRESS;
                                     Database=Imagine;
                                     Trusted_Connection=yes'''
         self.db = pyodbc.connect(self.CONNECTION_STRING)
+        print('[INFO] Initialed Database Connection')
 
     def getEvents(self):
         query = '''SELECT EventId, Name as EventName, ImageUrl as CoverImageUrl,
