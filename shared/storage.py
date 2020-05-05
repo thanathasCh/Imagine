@@ -8,7 +8,8 @@ class Storage:
             "apiKey": "AIzaSyBWm3BStpa73uv9d45sLnYCyxQ6iOrlT5U",
             "authDomain": "imagine-cab17.firebaseapp.com",
             "databaseURL": "https://imagine-cab17.firebaseio.com",
-            "storageBucket": "imagine-cab17.appspot.com"
+            "storageBucket": "imagine-cab17.appspot.com",
+            "serviceAccount": "../imagine-cab17-firebase-adminsdk-fpuec-82d6ea31cc.json"
         }
         
         self.CoverImagePath = 'Event/{}/CoverImages'
