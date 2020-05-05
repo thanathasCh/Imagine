@@ -1,5 +1,4 @@
 import pyrebase
-from .db import Db
 
 class Storage:
     def __init__(self):
