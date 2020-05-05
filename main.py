@@ -124,16 +124,18 @@ def selectImage():
 
 @app.route('/processImage', methods = ['POST'])
 def processImage():
-    if request.form.getlist('userImage[]'):
-        images = request.form.getlist('userImage[]')
-        for i in range(len(images)):
-            response = urllib.request.urlopen(images[i])
-            with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
-                f.write(response.file.read())
-    else:
+    if not request.form.getlist('userImage[]'):
         flash.danger(messages.fileOrImageMissing)
+        return render_template('processImage.html')
+        
+    images = request.form.getlist('userImage[]')
+    for i in range(len(images)):
+        response = urllib.request.urlopen(images[i])
+        with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
+            f.write(response.file.read())
+        
     
-    return render_template('processImage.html')
+    
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
