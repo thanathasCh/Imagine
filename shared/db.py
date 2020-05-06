@@ -4,14 +4,17 @@ import cv2
 import numpy as np
 from urllib import request
 from passlib.hash import sha256_crypt
+from .npR import convertImageToBinary, convertBinaryToImage
 
 class Db:
     def __init__(self):
+        print('[INFO] Initializing Database Connection')
         self.CONNECTION_STRING = '''Driver={ODBC Driver 17 for SQL Server};
                                     Server=MSI\\SQLEXPRESS;
                                     Database=Imagine;
                                     Trusted_Connection=yes'''
         self.db = pyodbc.connect(self.CONNECTION_STRING)
+        print('[INFO] Initialed Database Connection')
 
     def getEvents(self):
         query = '''SELECT EventId, Name as EventName, ImageUrl as CoverImageUrl,
@@ -25,7 +28,7 @@ class Db:
         data = []
         for i in range(len(fetchQuery)):
             tempEvent = [x for x in fetchQuery[i]]
-            data.append(Event(tempEvent[1], tempEvent[3],tempEvent[4], 
+            data.append(Event(tempEvent[1], tempEvent[3], tempEvent[4],
                               tempEvent[2], eventId=tempEvent[0]))
 
         cursorSelect.close()
@@ -79,33 +82,21 @@ class Db:
     def insertEventImages(self, eventId, imageUrls, coverImageUrl=None):
         query = 'INSERT INTO IMAGES(ImageUrl, EventId, IsCoverImage) VALUES (?, ?, ?)'
         cursor = self.db.cursor()
+        ids = []
 
-        cursor.execute(query, coverImageUrl, eventId, 1)
+        if coverImageUrl is not None:
+            cursor.execute(query, coverImageUrl, eventId, 1)
+
         for url in imageUrls:
             cursor.execute(query, url, eventId, 0)
+            self.db.commit()
+            ids.append(cursor.execute('select @@IDENTITY').fetchall())
 
-        self.db.commit()
+        return ids
 
     def getImageUrl(self, imageId):
         query = f'SELECT ImageUrl FROM Images WHERE id = {imageId}'
         return self.db.execute(query).fetchval()
-
-    def getPreprocessedImages(self, eventId):
-        query = f'''SELECT PreprocessedImageUrl
-                    FROM Images, PreprocessedImage
-                    WHERE EventId = {eventId} and Images.id = PreprocessedImage.ImageId'''
-
-        cursorSelect = self.db.execute(query).fetchall()
-        preprocessedImages = []
-    
-        for url in cursorSelect:
-            reqImage = request.urlopen(url[0])
-            img = np.asarray(bytearray(reqImage.read()),dtype="uint8")
-            img = cv2.imdecode(img, -1)
-            preprocessedImages.append(img)
-
-        cursorSelect.close()
-        return preprocessedImages
 
     def isUserNameDuplicated(self, username):
         query = '''SELECT *
@@ -138,7 +129,35 @@ class Db:
         self.db.commit()
 
     def deleteEvent(self, id):
-        query = 'DELETE FROM Events WHERE Id = ?'
+        eventQuery = 'DELETE FROM Events WHERE id = ?'
+        imageIdQuery = 'SELECT Id FROM Images WHERE EventId = ?'
+        imageQuery = 'DELETE FROM Images WHERE EventId = ?'
+        preprocessedImageQuery = 'DELETE FROM PreprocessedImage WHERE ImageId = ?'
 
-        self.db.execute(query, id)
+        imageIds = [x[0] for x in self.db.execute(imageIdQuery, id).fetchall()]
+        self.db.execute(eventQuery, id)
+        self.db.execute(imageQuery, id)
+        
+        for imageId in imageIds:
+            self.db.execute(preprocessedImageQuery, imageId)
         self.db.commit()
+
+    def insertPreprocessedImages(self, images, imageId):
+        query = 'INSERT INTO PreprocessedImage(BinaryImage, ImageId) VALUES (?, ?)'
+        cursor = self.db.cursor()
+
+        for image in images:
+            binary = pyodbc.Binary(convertImageToBinary(image))
+            cursor.execute(query, binary, imageId)
+
+        self.db.commit()
+
+    def getPreprocessedImages(self, eventId):
+        query = '''SELECT PreprocessedImage.BinaryImage
+                   FROM PreprocessedImage
+                   INNER JOIN Images ON PreprocessedImage.ImageId = Images.Id
+                   WHERE Images.EventId = ?'''
+
+        cursor = self.db.execute(query, eventId).fetchall()
+        
+        return [convertBinaryToImage(x[0]).flatten() for x in list(cursor)]

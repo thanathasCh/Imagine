@@ -3,18 +3,24 @@ import os
 import urllib
 from pathlib import Path
 import gc
+import numpy as np
+from copy import deepcopy
+import face_recognition
+import cv2
 
 from shared import messages, flash
 from shared.db import Db
-from shared.storage import upload_cover_blob, upload_images_blob
+from shared.storage import Storage
 from shared.model import Event, EventImage
 
 app = Flask('Imagine')
 app.secret_key = "super secret key"
 
-OUTPUT_PATH = 'datasets/img'
+OUTPUT_PATH = 'datasets'
 BUCKET_NAME = 'eventimagefilter'
+MODEL = 'hog'
 db = Db()
+storage = Storage()
 
 @app.route('/')
 def index():
@@ -87,45 +93,50 @@ def addEventSubmit():
         print(date)
         poster = request.files['posterImage']
         files = request.files.getlist('eventImages')
-        
-        event = Event(name,description,date)
+        secondFiles = request.files.getlist('secondEventImages')
+
+        event = Event(name, description, date)
         eventId = db.createEvent(event)
 
-        imagePath = f'Event/{eventId}/Images'
-        coverImagePath = f'Event/{eventId}/CoverImages'
-        coverImageUrl = upload_cover_blob(poster, coverImagePath, eventId)
-        imageUrls = upload_images_blob(files, imagePath, eventId)
+        seq_cover_number = db.getCoverImgSeqNumber(eventId) + 1
+        coverImageUrl = storage.upload_cover_blob(poster, eventId, seq_cover_number)
 
-        db.insertEventImages(eventId, imageUrls, coverImageUrl)
-    
-        events = db.getEvents()       
+        seq_number = db.getImgSeqNumber(eventId)
+        imageUrls = storage.upload_images_blob(files, eventId, seq_number)
+        imageIds = db.insertEventImages(eventId, imageUrls, coverImageUrl)
 
-    flash.info(messages.addEventSuccessful)
-    return render_template('event.html', events=events)
+        for s, i in zip(secondFiles, imageIds):
+            file_read = s.read()
+            npImg = np.fromstring(file_read, np.uint8)
+            img = cv2.imdecode(npImg, cv2.IMREAD_UNCHANGED)
+            locations = face_recognition.face_locations(img, model=MODEL)
+            encoding = face_recognition.face_encodings(img, locations)
+            db.insertPreprocessedImages(encoding, i[0][0])
 
+        flash.success(messages.addEventSuccessful)
+        return redirect(url_for('event'))
+    else:
+        flash.danger(messages.unableToCreateEvent)
+        return render_template('addevent.html')
+        
 @app.route('/selectImage')
 def selectImage():
     return render_template('selectimage.html')
 
 @app.route('/processImage', methods = ['POST'])
 def processImage():
-    root_dir = Path('./datasets')
-    items = root_dir.iterdir()
-    
-    for file in items:
-        if file.is_file():
-            os.remove(file)
-
-    if request.form.getlist('userImage[]'):
-        images = request.form.getlist('userImage[]')
-        for i in range(len(images)):
-            response = urllib.request.urlopen(images[i])
-            with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
-                f.write(response.file.read())
-    else:
+    if not request.form.getlist('userImage[]'):
         flash.danger(messages.fileOrImageMissing)
+        return render_template('processImage.html')
+        
+    images = request.form.getlist('userImage[]')
+    for i in range(len(images)):
+        response = urllib.request.urlopen(images[i])
+        with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
+            f.write(response.file.read())
+        
     
-    return render_template('processImage.html')
+    
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
@@ -144,6 +155,7 @@ def editEventSubmit():
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):
     db.deleteEvent(id)
+    flash.success(messages.deleteSuccessful)
     return redirect(url_for('event'))
 
 @app.route('/ImageFilter')
