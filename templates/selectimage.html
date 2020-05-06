@@ -12,7 +12,7 @@
         </div>
     </div>
     <form id="selctForm" action="{{ url_for('processImage') }}" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
+        <div class="form-group" id="vid-controls">
             <div class="row">
                 <div class="col-12"><br>
                     <video id="vid-show" width="480" height="360" autoplay></video>
@@ -20,11 +20,11 @@
             </div><br>
             <div class="row">
                 <div class="col-12">
-                    <label> Take a selfie:  </label>
+                    <label> Take a selfie: </label>
                     <input id="vid-take" type="button" value="Take Photo" />
                 </div>
                 <div class="col-12">
-                    <label> Or select from your gallery:  </label>
+                    <label> Or select from your gallery: </label>
                     <input id="user-image" type="file" multiple accept="image/*" onchange="previewFiles()"
                         name="userImage">
                 </div>
@@ -37,6 +37,68 @@
 
 </section>
 
-<script tpye="text/javascript" src="{{ url_for('static', filename='js/pages/select-image.js') }}"></script>
+<script>
+    var preview = document.getElementById('user-gallery');
+    var video = document.getElementById("vid-show"),
+        take = document.getElementById("vid-take"),
+        imageList = [];
+
+    navigator.mediaDevices.getUserMedia({
+            video: true
+        })
+        .then(function (stream) {
+            video.srcObject = stream;
+            video.play();
+
+            take.addEventListener("click", function () {
+                var canvas = document.createElement("canvas");
+                canvas.width = 480;
+                canvas.height = 360;
+                var context2D = canvas.getContext("2d");
+                context2D.drawImage(video, 0, 0, 480, 360);
+                var image = new Image();
+                image.height = 150;
+                image.src = canvas.toDataURL();
+                preview.appendChild(image);
+                // imageList add image url (base64)
+                imageList.push(image.src);
+            });
+        })
+        .catch(function (err) {
+            document.getElementById('vid-controls').innerHTML =
+                "Please enable access and attach a camera";
+        });
+
+    $('#confirm-button').on('click', function () {
+        if (imageList.length > 0) {
+            $.post("/processImage", {
+                'userImage[]': imageList
+            });
+        } else {
+            alert("Image or file not found.");
+        }
+    })
+
+    function previewFiles() {
+        var files = document.getElementById('user-image').files;
+
+        function readAndPreview(file) {
+            var reader = new FileReader();
+            reader.addEventListener("load", function () {
+                var image = new Image();
+                image.height = 150;
+                image.title = file.name;
+                image.src = this.result;
+                preview.appendChild(image);
+                // imageList add image url (base64)
+                imageList.push(this.result);
+            }, false);
+            reader.readAsDataURL(file);
+        }
+        if (files) {
+            [].forEach.call(files, readAndPreview);
+        }
+    }
+</script>
 
 {% endblock %}
