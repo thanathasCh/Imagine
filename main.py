@@ -125,14 +125,16 @@ def selectImage():
 @app.route('/processImage', methods = ['POST'])
 def processImage():
     files = request.form.getlist('username[]')
+    for i in files:
+        print(i.filename)
     if not files:
         flash.danger(messages.fileOrImageMissing)
-        return render_template('processImage.html')
+        return redirect(url_for('selectImage'))
         
-    # for i in range(len(files)):
-    #     response = urllib.request.urlopen(files[i])
-    #     with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
-    #         f.write(response.file.read())
+    for i in range(len(files)):
+        response = urllib.request.urlopen(files[i])
+        with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
+            f.write(response.file.read())
     for i in files:
         file_read = s.read()
         npImg = np.formstring(file_read, np.uint8)
