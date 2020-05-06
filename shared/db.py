@@ -10,7 +10,7 @@ class Db:
     def __init__(self):
         print('[INFO] Initializing Database Connection')
         self.CONNECTION_STRING = '''Driver={ODBC Driver 17 for SQL Server};
-                                    Server=LAPTOP-4QQA0D0G\\SQLEXPRESS;
+                                    Server=localhost;
                                     Database=Imagine;
                                     Trusted_Connection=yes'''
         self.db = pyodbc.connect(self.CONNECTION_STRING)
