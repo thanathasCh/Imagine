@@ -8,6 +8,7 @@ fileOrImageMissing = 'Files or Images are missing.'
 missingFields = 'Some fileds are missing.'
 passwordNotMatch = 'Password does not match.'
 duplicateUsername = 'Username is already taken, please choose another.'
+unableToCreateEvent = 'Unable to create new event.'
 
 error505 = 'Internal Error has occured.'
 error404 = 'This page is not finished yet!! GO BACK!!'
