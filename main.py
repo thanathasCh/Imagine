@@ -124,15 +124,21 @@ def selectImage():
 
 @app.route('/processImage', methods = ['POST'])
 def processImage():
-    if not request.form.getlist('userImage[]'):
+    files = request.form.getlist('username[]')
+    if not files:
         flash.danger(messages.fileOrImageMissing)
         return render_template('processImage.html')
         
-    images = request.form.getlist('userImage[]')
-    for i in range(len(images)):
-        response = urllib.request.urlopen(images[i])
-        with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
-            f.write(response.file.read())
+    # for i in range(len(files)):
+    #     response = urllib.request.urlopen(files[i])
+    #     with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
+    #         f.write(response.file.read())
+    for i in files:
+        file_read = s.read()
+        npImg = np.formstring(file_read, np.uint8)
+        img = cv2.imdecode(npImg, cv2.IMREAD_UNCHANGED)
+        cv2.imshow('a', img)
+        cv2.waitKey(0)
         
     
     
@@ -154,6 +160,7 @@ def editEventSubmit():
 @app.route('/deleteEvent/<int:id>')
 def deleteEvent(id):
     db.deleteEvent(id)
+    storage.deleteImagesByEventId(id)
     flash.success(messages.deleteSuccessful)
     return redirect(url_for('event'))
 

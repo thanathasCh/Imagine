@@ -24,8 +24,8 @@ class Storage:
         destination_blob_name = f'{destination_blob_path}/img{seq_number}.jpg'
         uploaded_file_json = self.STORAGE_CLIENT.child(destination_blob_name).put(source_file_name)
         print(f'File {source_file_name.filename} uploaded to {destination_blob_name}.')
-
-        return self.STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json['downloadTokens'])
+    
+        return self.STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json)
 
     def upload_images_blob(self, source_file_names, eventId, seq_number):
         urls = []
@@ -36,6 +36,13 @@ class Storage:
             destination_blob_name = f'{destination_blob_path}/img{seq_number}.jpg'
             uploaded_file_json = self.STORAGE_CLIENT.child(destination_blob_name).put(image)
             print(f'File {image.filename} uploaded to {destination_blob_name}.')
-            urls.append(self.STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json['downloadTokens']))
+            urls.append(self.STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json))
     
         return urls
+
+    def deleteImagesByEventId(self, eventId):
+        for i in self.STORAGE_CLIENT.child(self.CoverImagePath.format(eventId)).list_files():
+            self.STORAGE_CLIENT.delete(i.name)
+
+        for i in self.STORAGE_CLIENT.child(self.ImagePath.format(eventId)).list_files():
+            self.STORAGE_CLIENT.delete(i.name)

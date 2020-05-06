@@ -36,7 +36,7 @@ $('#confirm-button').on('click', function () {
             'userImage[]': imageList
         });
     } else {
-        alert("Imagse or files are not missing.");
+        alert("Images or files are missing.");
     }
 })
 

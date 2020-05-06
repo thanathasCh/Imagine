@@ -1,5 +1,5 @@
 from imgarray import save_array_img, load_array_img
-from os import fsync
+from os import fsync, remove
 
 PATH = 'datasets/img.png'
 
@@ -21,7 +21,12 @@ def convertFileToBinary(filename):
     return binaryData
 
 def convertImageToBinary(img):
-    return convertFileToBinary(save_array_to_PNG(img, PATH))
+    data = convertFileToBinary(save_array_to_PNG(img, PATH))
+    clearCache()
+    return data
+
+def clearCache():
+    remove(PATH)
 
 def write_file(data, path):
     with open(path, 'wb') as file:
@@ -29,4 +34,6 @@ def write_file(data, path):
 
 def convertBinaryToImage(binary):
     write_file(binary, PATH)
-    return load_array_img(PATH)
+    data = load_array_img(PATH)
+    clearCache
+    return data
