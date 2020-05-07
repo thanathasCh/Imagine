@@ -10,7 +10,7 @@
                     <h1>{{ model['eventName'] }}</h1>
                 </div>
                 <div class="col-2">
-                    <a class="btn btn-primary" role="button" href="{{ url_for('selectImage') }}">Find yourself!</a>
+                    <a class="btn btn-primary" role="button" href="{{ url_for('selectImage', id=model['eventId']) }}">Find yourself!</a>
                 </div>
                 <div class="col-1">
                     <a class="btn btn-outline-primary restricted-content" style="float: right;" role="button"  href="{{ url_for('editEvent', id=model['eventId']) }}">

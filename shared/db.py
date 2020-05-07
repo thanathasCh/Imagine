@@ -153,11 +153,10 @@ class Db:
         self.db.commit()
 
     def getPreprocessedImages(self, eventId):
-        query = '''SELECT PreprocessedImage.BinaryImage
+        query = '''SELECT PreprocessedImage.BinaryImage, PreprocessedImage.ImageId
                    FROM PreprocessedImage
                    INNER JOIN Images ON PreprocessedImage.ImageId = Images.Id
                    WHERE Images.EventId = ?'''
 
-        cursor = self.db.execute(query, eventId).fetchall()
-        
-        return [convertBinaryToImage(x[0]).flatten() for x in list(cursor)]
+        cursor = self.db.execute(query, eventId).fetchall()  
+        return [[convertBinaryToImage(x[0][0]).flatten(), x[0][1]] for x in list(cursor)]

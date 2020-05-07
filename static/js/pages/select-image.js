@@ -33,10 +33,11 @@ $(document).ready(function() {
     $('#confirm-button').on('click', function () {
         if (imageList.length > 0) {
             $.post("/processImage", {
-                'userImage[]': imageList
+                'userImages[]': imageList,
+                'eventId': $('#eventId').val()
             });
         } else {
-            alert("Images or files are missing found.");
+            alert("Images or files are missing.");
         }
     })
 

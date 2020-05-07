@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, url_for, session, redirect
 import os
-import urllib
+from urllib.request import urlopen
 from pathlib import Path
 import gc
 import numpy as np
@@ -12,11 +12,11 @@ from shared import messages, flash
 from shared.db import Db
 from shared.storage import Storage
 from shared.model import Event, EventImage
-
+from shared.jsonNp import npToJson, jsonToNp
 app = Flask('Imagine')
 app.secret_key = "super secret key"
 
-OUTPUT_PATH = 'datasets'
+OUTPUT_PATH = 'shared/datasets/processedImages'
 BUCKET_NAME = 'eventimagefilter'
 MODEL = 'hog'
 db = Db()
@@ -118,32 +118,35 @@ def addEventSubmit():
         flash.danger(messages.unableToCreateEvent)
         return render_template('addevent.html')
         
-@app.route('/selectImage')
-def selectImage():
-    return render_template('selectimage.html')
+@app.route('/selectImage/<int:id>')
+def selectImage(id):
+    return render_template('selectimage.html', eventId = id)
 
 @app.route('/processImage', methods = ['POST'])
 def processImage():
-    files = request.form.getlist('username[]')
-    for i in files:
-        print(i.filename)
+    files = request.form.getlist('userImages[]')
+    eventId = request.form['eventId']
+    print(eventId)
     if not files:
         flash.danger(messages.fileOrImageMissing)
-        return redirect(url_for('selectImage'))
-        
-    for i in range(len(files)):
-        response = urllib.request.urlopen(files[i])
-        with open(OUTPUT_PATH + str(i) + '.jpg', 'wb') as f:
-            f.write(response.file.read())
-    for i in files:
-        file_read = s.read()
-        npImg = np.formstring(file_read, np.uint8)
-        img = cv2.imdecode(npImg, cv2.IMREAD_UNCHANGED)
-        cv2.imshow('a', img)
-        cv2.waitKey(0)
-        
-    
-    
+        return render_template('processImage.html')
+
+    known = []
+    imageIds = {}
+
+    for f in files:
+        img = cv2.imdecode(np.fromstring(urlopen(f).file.read(), np.uint8), 1)
+        locations = face_recognition.face_locations(img, model=MODEL)
+        encoding = face_recognition.face_encodings(img, locations)
+        known = known + encoding
+
+    unknown = db.getPreprocessedImages(eventId)
+
+    for face in unknown:
+        if True in face_recognition.compare_faces(known, face):
+            imageIds.add(face[1])
+
+    print(imageIds)
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
