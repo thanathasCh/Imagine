@@ -9,6 +9,7 @@ missingFields = 'Some filed are missing.'
 passwordNotMatch = 'Password does not match.'
 duplicateUsername = 'Username is already taken, please choose another.'
 unableToCreateEvent = 'Unable to create new event.'
+noMatchFace = "Can not find any matching face."
 
 error505 = 'Internal Error has occurred.'
 error404 = 'This page is not finished yet!! GO BACK!!'

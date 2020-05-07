@@ -1,0 +1,30 @@
+{% set title = 'Your Images' %}
+{% extends "shared/_layout.html" %}
+{% block content %}
+
+{{ event.date }}
+<section>
+    <div class="panel-group">
+        <div class="block block--underline">
+            <div class="row">
+                <div class="col-9">
+                    <h1>{{ event.eventName }}</h1>
+                </div>
+            </div>
+            <label class="label label-info">{{ event.date }}</label>
+        </div>
+        <div class="row">
+            {% for i in range(eventImages|length) %}
+                <div class="col-sm-3 col-md-3 mt-5">
+                    <img id="image-modal-{{ i }}" class="img-thumbnail" src={{ eventImages[i] }}>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% include 'shared/_imageModal.html' %}
+
+</section>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/pages/image_modal.js') }}"></script>
+
+{% endblock %}

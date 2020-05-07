@@ -1,10 +1,8 @@
 import pyodbc
 from .model import Event, EventImage
-import cv2
+from .jsonNp import npToJson, jsonToNp
 import numpy as np
-from urllib import request
 from passlib.hash import sha256_crypt
-from .npR import convertImageToBinary, convertBinaryToImage
 
 class Db:
     def __init__(self):
@@ -56,6 +54,22 @@ class Db:
 
         cursorSelect.close()
         return model
+
+    def getEventInformation(self, id):
+        query = '''SELECT Name, Description, OrganizedDateTime, Id
+                   FROM Events
+                   WHERE Id = ?'''
+
+        cursor = self.db.execute(query, id).fetchone()
+        event = Event(cursor[0], cursor[1] ,cursor[2], cursor[3])
+        return event
+
+    def getImageByIds(self, ids):
+        placeholders = ",".join("?" * len(ids))
+        query = f'''SELECT ImageUrl
+                   FROM Images
+                   WHERE Id in ({placeholders})'''
+        return([x[0] for x in self.db.execute(query, list(ids))])
 
     def getImgSeqNumber(self, eventId):
         query = f'SELECT COUNT(id) FROM Images where EventId = {eventId} AND IsCoverImage = 0'
@@ -143,20 +157,20 @@ class Db:
         self.db.commit()
 
     def insertPreprocessedImages(self, images, imageId):
-        query = 'INSERT INTO PreprocessedImage(BinaryImage, ImageId) VALUES (?, ?)'
+        query = 'INSERT INTO PreprocessedImage(ImageJson, ImageId) VALUES (?, ?)'
         cursor = self.db.cursor()
 
         for image in images:
-            binary = pyodbc.Binary(convertImageToBinary(image))
-            cursor.execute(query, binary, imageId)
+            jsonStr = npToJson(image)
+            cursor.execute(query, jsonStr, imageId)
 
         self.db.commit()
 
     def getPreprocessedImages(self, eventId):
-        query = '''SELECT PreprocessedImage.BinaryImage, PreprocessedImage.ImageId
+        query = '''SELECT PreprocessedImage.ImageJson, PreprocessedImage.ImageId
                    FROM PreprocessedImage
                    INNER JOIN Images ON PreprocessedImage.ImageId = Images.Id
                    WHERE Images.EventId = ?'''
 
-        cursor = self.db.execute(query, eventId).fetchall()  
-        return [[convertBinaryToImage(x[0][0]).flatten(), x[0][1]] for x in list(cursor)]
+        cursor = self.db.execute(query, eventId).fetchall() 
+        return [[jsonToNp(x[0]), x[1]] for x in cursor] 

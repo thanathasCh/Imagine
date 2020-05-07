@@ -12,13 +12,14 @@ from shared import messages, flash
 from shared.db import Db
 from shared.storage import Storage
 from shared.model import Event, EventImage
-from shared.jsonNp import npToJson, jsonToNp
+from shared.jsonNp import npToJson, jsonToNp, convertBinaryToImage
+
 app = Flask('Imagine')
 app.secret_key = "super secret key"
 
-OUTPUT_PATH = 'shared/datasets/processedImages'
 BUCKET_NAME = 'eventimagefilter'
 MODEL = 'hog'
+TOLERANCE = 0.5
 db = Db()
 storage = Storage()
 
@@ -105,9 +106,10 @@ def addEventSubmit():
         imageIds = db.insertEventImages(eventId, imageUrls, coverImageUrl)
 
         for s, i in zip(secondFiles, imageIds):
-            file_read = s.read()
-            npImg = np.fromstring(file_read, np.uint8)
-            img = cv2.imdecode(npImg, cv2.IMREAD_UNCHANGED)
+            # file_read = s.read()
+            # npImg = np.fromstring(file_read, np.uint8)
+            # img = cv2.imdecode(npImg, cv2.IMREAD_UNCHANGED)
+            img = convertBinaryToImage(s.read())
             locations = face_recognition.face_locations(img, model=MODEL)
             encoding = face_recognition.face_encodings(img, locations)
             db.insertPreprocessedImages(encoding, i[0][0])
@@ -126,27 +128,33 @@ def selectImage(id):
 def processImage():
     files = request.form.getlist('userImages[]')
     eventId = request.form['eventId']
-    print(eventId)
+
     if not files:
         flash.danger(messages.fileOrImageMissing)
-        return render_template('processImage.html')
+        return redirect(url_for('selectImage', id=eventId))
 
     known = []
-    imageIds = {}
+    imageIds = set()
 
     for f in files:
         img = cv2.imdecode(np.fromstring(urlopen(f).file.read(), np.uint8), 1)
         locations = face_recognition.face_locations(img, model=MODEL)
         encoding = face_recognition.face_encodings(img, locations)
         known = known + encoding
-
+    
     unknown = db.getPreprocessedImages(eventId)
+    for face, imageId in unknown:
+        results = face_recognition.compare_faces(known, face, TOLERANCE)
+        if True in results:
+            imageIds.add(imageId)
 
-    for face in unknown:
-        if True in face_recognition.compare_faces(known, face):
-            imageIds.add(face[1])
-
-    print(imageIds)
+    if imageIds:
+        event = db.getEventInformation(eventId)
+        eventImages = db.getImageByIds(imageIds)
+        return render_template('showImages.html', event = event, eventImages = eventImages)
+    else:
+        flash.info(messages.noMatchFace)
+        return redirect(url_for('selectImage', id=eventId))
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):

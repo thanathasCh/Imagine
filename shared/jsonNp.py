@@ -1,33 +1,20 @@
-import json
-from json import JSONEncoder
-import numpy as np
+from cv2 import imdecode, IMREAD_UNCHANGED
+from json import JSONEncoder, dumps, loads
+from numpy import ndarray, asarray, fromstring, uint8
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, np.ndarray):
+        if isinstance(obj, ndarray):
             return obj.tolist()
         return JSONEncoder.default(self, obj)
 
 def npToJson(arr):
     data = {"array": arr}
-    return json.dumps(data, cls=NumpyArrayEncoder)
+    return dumps(data, cls=NumpyArrayEncoder)
 
 def jsonToNp(arr):
-    data = json.loads(arr)
-    return np.asarray(data['array'])
+    data = loads(arr)
+    return asarray(data['array'])
 
-# numpyArrayOne = np.array([[11, 22, 33], [44, 55, 66], [77, 88, 99]])
-
-# # Serialization
-# numpyData = {"array": numpyArrayOne}
-# encodedNumpyData = json.dumps(numpyData, cls=NumpyArrayEncoder)  # use dump() to write array into file
-# print("Printing JSON serialized NumPy array")
-# print(encodedNumpyData)
-
-# # Deserialization
-# print("Decode JSON serialized NumPy array")
-# decodedArrays = json.loads(encodedNumpyData)
-
-# finalNumpyArray = np.asarray(decodedArrays["array"])
-# print("NumPy Array")
-# print(finalNumpyArray)
+def convertBinaryToImage(binary):
+    return imdecode(fromstring(binary, uint8), IMREAD_UNCHANGED)

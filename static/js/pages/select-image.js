@@ -35,7 +35,13 @@ $(document).ready(function() {
             $.post("/processImage", {
                 'userImages[]': imageList,
                 'eventId': $('#eventId').val()
-            });
+            })
+            .done(function(data) {
+                document.write(data);
+            })
+            .fail(function() {
+                alert("Error Occurred.")
+            })
         } else {
             alert("Images or files are missing.");
         }
