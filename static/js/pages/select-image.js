@@ -34,7 +34,8 @@ $(document).ready(function() {
         if (imageList.length > 0) {
             $.post("/processImage", {
                 'userImages[]': imageList,
-                'eventId': $('#eventId').val()
+                'eventId': $('#eventId').val(),
+                'similarity': $('#slider-value').val()
             })
             .done(function(data) {
                 document.write(data);
@@ -66,5 +67,10 @@ $(document).ready(function() {
         if (files) {
             [].forEach.call(files, readAndPreview);
         }
+    })
+
+    $('#slider-value').change(function() {
+        $("#slider-show").empty();
+        $("#slider-show").append($(this).val().toString() + '%');
     })
 })

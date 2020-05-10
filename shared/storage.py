@@ -26,6 +26,11 @@ class Storage:
         print(f'File {source_file_name.filename} uploaded to {destination_blob_name}.')
     
         return self.STORAGE_CLIENT.child(destination_blob_name).get_url(uploaded_file_json)
+        # return_url = self.STORAGE_CLIENT.child(destination_blob_name)
+        # print('Print uploaded_file_json -> ', uploaded_file_json)
+        # print('Print return_url -> ', return_url)
+        # print('Print return_url.get_url(uploaded_file_json) -> ', return_url.get_url(uploaded_file_json))
+        # return return_url.get_url(uploaded_file_json)
 
     def upload_images_blob(self, source_file_names, eventId, seq_number):
         urls = []

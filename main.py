@@ -19,7 +19,7 @@ app.secret_key = "super secret key"
 
 BUCKET_NAME = 'eventimagefilter'
 MODEL = 'hog'
-TOLERANCE = 0.5
+# TOLERANCE = 0.5
 db = Db()
 storage = Storage()
 
@@ -128,6 +128,9 @@ def selectImage(id):
 def processImage():
     files = request.form.getlist('userImages[]')
     eventId = request.form['eventId']
+    similarity = int(request.form['similarity'])
+    TOLERANCE = 1 - (similarity / 100)
+    print(TOLERANCE)
 
     if not files:
         flash.danger(messages.fileOrImageMissing)
