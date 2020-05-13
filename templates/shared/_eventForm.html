@@ -3,13 +3,13 @@
         <div class="col-12 form-group">
             <label>Event Name</label>
             <input id="event-name" type="text" class="form-control" placeholder="Enter Event Name" 
-                required name="eventname">
+                required name="eventname" value="{{ model.eventName }}">
         </div>
     </div><br>
     <div class="row">
         <div class="col-6 form-group">
             <label>Date</label>
-            <input id="datepicker" name="date" class="form-control" type="text" autocomplete="off">
+            <input id="datepicker" name="date" class="form-control" type="text" autocomplete="off" value="{{ model.date }}">
         </div>
     </div><br>
     <div class="row">
@@ -17,7 +17,7 @@
             <label>Poster Image</label>
         </div>
         <div class="col-6 form-group">
-            <input id="poster-image" type="file" required accept="image/*" name="posterImage">
+            <input id="poster-image" type="file" accept="image/*" name="posterImage">
         </div>
         <div class="row">
             <div class="col-md-12" id="poster-gallery"></div>
@@ -27,7 +27,7 @@
         <div class="col-12 form-group">
             <label>Description (Not over 500 characters)</label>
             <textarea class="form-control" maxlength="500" rows="5" 
-                      name="description" form="eventForm"></textarea>
+                      name="description" form="eventForm" value="{{ model.description }}"></textarea>
         </div>
     </div><br>
     <div class="row">
@@ -35,7 +35,7 @@
         <label>Event Images</label>
     </div>
         <div class="col-12 form-group">
-            <input id="add-images" type="file" required multiple accept="image/*" name="eventImages">
+            <input id="add-images" type="file" multiple accept="image/*" name="eventImages">
         </div>
     </div>
     <div class="row">
@@ -48,3 +48,4 @@
         <a class="btn btn-default btn-block" href="/event">Cancel</a>
     </div>
 </div>
+<input name="eventId" value="{{ model.eventId }}" hidden>

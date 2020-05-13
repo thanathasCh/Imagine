@@ -10,7 +10,8 @@ class Db:
         self.CONNECTION_STRING = '''Driver={ODBC Driver 17 for SQL Server};
                                     Server=LAPTOP-4QQA0D0G\\SQLEXPRESS;
                                     Database=Imagine;
-                                    Trusted_Connection=yes'''
+                                    Trusted_Connection=Yes;
+                                    MARS_Connection=Yes;'''
         self.db = pyodbc.connect(self.CONNECTION_STRING)
         print('[INFO] Initialed Database Connection')
 
@@ -87,8 +88,7 @@ class Db:
                 VALUES (?, ?, ?)'''
 
         cursor = self.db.cursor()
-        cursor.execute(query, event.eventName, event.description,
-                       event.date)
+        cursor.execute(query, event.eventName, event.description, event.date)
 
         self.db.commit()
         return cursor.execute('select @@IDENTITY').fetchval()
@@ -141,6 +141,15 @@ class Db:
 
         self.db.execute(query, firstName, lastName, username, sha256_crypt.encrypt(password))
         self.db.commit()
+
+    def updateEvent(self, event):
+        query = '''UPDATE Events
+                   SET Name = ?, 
+                   Description = ?, 
+                   OrganizedDateTime = ?
+                   WHERE Id = ?'''
+
+        self.db.execute(query, event.eventName, event.description, event.date, event.eventId).commit()
 
     def deleteEvent(self, id):
         eventQuery = 'DELETE FROM Events WHERE id = ?'

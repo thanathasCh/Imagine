@@ -19,7 +19,6 @@ app.secret_key = "super secret key"
 
 BUCKET_NAME = 'eventimagefilter'
 MODEL = 'hog'
-# TOLERANCE = 0.5
 db = Db()
 storage = Storage()
 
@@ -106,9 +105,6 @@ def addEventSubmit():
         imageIds = db.insertEventImages(eventId, imageUrls, coverImageUrl)
 
         for s, i in zip(secondFiles, imageIds):
-            # file_read = s.read()
-            # npImg = np.fromstring(file_read, np.uint8)
-            # img = cv2.imdecode(npImg, cv2.IMREAD_UNCHANGED)
             img = convertBinaryToImage(s.read())
             locations = face_recognition.face_locations(img, model=MODEL)
             encoding = face_recognition.face_encodings(img, locations)
@@ -130,7 +126,6 @@ def processImage():
     eventId = request.form['eventId']
     similarity = int(request.form['similarity'])
     TOLERANCE = 1 - (similarity / 100)
-    print(TOLERANCE)
 
     if not files:
         flash.danger(messages.fileOrImageMissing)
@@ -156,8 +151,9 @@ def processImage():
         eventImages = db.getImageByIds(imageIds)
         return render_template('showImages.html', event = event, eventImages = eventImages)
     else:
-        flash.info(messages.noMatchFace)
-        return redirect(url_for('selectImage', id=eventId))
+        # flash.info(messages.noMatchFace)
+        # return redirect(url_for('selectImage', id=eventId))
+        return ""
 
 @app.route('/eventDetail/<int:id>')
 def eventDetail(id):
@@ -171,6 +167,21 @@ def editEvent(id):
 
 @app.route('/editEventSubmit', methods=['POST'])
 def editEventSubmit():
+    if request.method == 'POST':
+        id = request.form['eventId']
+        name = request.form['eventname']
+        description = request.form['description']
+        date = request.form['date']
+        event = Event(name, description, date, eventId=id)
+        # poster = request.files['posterImage']
+        # files = request.files.getlist('eventImages')
+        # secondFiles = request.files.getlist('secondEventImages')
+        db.updateEvent(event)
+
+        flash.success(messages.editEventSuccessful)
+    else:
+        flash.danger(messages.unableToEditEvent)
+    
     return redirect(url_for('event'))
 
 @app.route('/deleteEvent/<int:id>')
@@ -179,10 +190,6 @@ def deleteEvent(id):
     storage.deleteImagesByEventId(id)
     flash.success(messages.deleteSuccessful)
     return redirect(url_for('event'))
-
-@app.route('/ImageFilter')
-def imageFilter():
-    return render_template('imageFilter.html')
 
 def returnResult():
     pass

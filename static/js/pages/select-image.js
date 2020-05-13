@@ -38,7 +38,13 @@ $(document).ready(function() {
                 'similarity': $('#slider-value').val()
             })
             .done(function(data) {
-                document.write(data);
+                console.log()
+                if (data !== "") {
+                    document.write(data);
+                } else {
+                    alert('Can not find any image of you in the event.')
+                    window.location.reload();
+                }
             })
             .fail(function() {
                 alert("Error Occurred.")
