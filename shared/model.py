@@ -1,5 +1,5 @@
 class Event:
-    def __init__(self, eventName, description, date, coverImageUrl=None, eventId=0):
+    def __init__(self, eventName="", description="", date="", coverImageUrl=None, eventId=0):
         self.eventId = eventId
         self.eventName = eventName
         self.coverImageUrl = coverImageUrl

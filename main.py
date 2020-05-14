@@ -82,7 +82,7 @@ def event():
 
 @app.route('/addEvent')
 def addEvent():
-    return render_template('addevent.html')
+    return render_template('addevent.html', model=Event())
 
 @app.route('/addEventSubmit', methods=['POST'])
 def addEventSubmit():
