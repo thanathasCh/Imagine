@@ -25,6 +25,12 @@
 
 </section>
 
+<script>
+    $('#loader-spin').fadeOut(400, function() {
+        $('#content-loader').fadeIn();
+    });   
+</script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/pages/image_modal.js') }}"></script>
+
 
 {% endblock %}

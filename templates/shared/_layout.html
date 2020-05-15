@@ -5,6 +5,7 @@
         <title>{{ title }} | Imagine</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/spinKit.css') }}">
         <script type="text/javascript" src="{{ url_for('static', filename='js/shared/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='js/shared/bootstrap.min.js') }}"></script>
         <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
@@ -59,7 +60,8 @@
                 {% endif %}
             {%  endwith %}
         </header>
-        <div class="container-fluid" style="max-width: 1000px; margin: auto; margin-top: 10mm;">
+        {% include 'shared/_loader.html' %}
+        <div id="content-loader" class="container-fluid" style="max-width: 1000px; margin: auto; margin-top: 10mm; display:none">
           {% if session['isLogin'] == True  or url_for(request.endpoint) == '/signup'%}
             {% block content %}{% endblock %}
           {% else %}
@@ -70,4 +72,5 @@
 
     <input id="is-admin" value="{{ session['isAdmin'] }}" hidden>
     <script tpye="text/javascript" src="{{ url_for('static', filename='js/shared/restricted-control.js') }}"></script>
+    <script tpye="text/javascript" src="{{ url_for('static', filename='js/shared/loader.js') }}"></script>
 </html>

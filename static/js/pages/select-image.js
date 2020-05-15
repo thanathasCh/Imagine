@@ -38,7 +38,6 @@ $(document).ready(function() {
                 'similarity': $('#slider-value').val()
             })
             .done(function(data) {
-                console.log()
                 if (data !== "") {
                     document.write(data);
                 } else {
