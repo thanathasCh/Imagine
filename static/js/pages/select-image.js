@@ -31,26 +31,36 @@ $(document).ready(function() {
         });
 
     $('#confirm-button').on('click', function () {
-        if (imageList.length > 0) {
-            $.post("/processImage", {
-                'userImages[]': imageList,
-                'eventId': $('#eventId').val(),
-                'similarity': $('#slider-value').val()
-            })
-            .done(function(data) {
-                if (data !== "") {
-                    document.write(data);
+        closeMedia();
+
+        $('#content-loader').fadeOut(400, function() {
+            $('#loader-spin').fadeIn(400, function() {
+                if (imageList.length > 0) {
+                    $.post("/processImage", {
+                        'userImages[]': imageList,
+                        'eventId': $('#eventId').val(),
+                        'similarity': $('#slider-value').val()
+                    })
+                    .done(function(data) {
+                        if (data !== "") {
+                            $('#content-loader').html(data)
+                        } else {
+                            alert('Can not find any image of you in the event.')
+                            window.location.reload();
+                        }
+                    })
+                    .fail(function() {
+                        alert("Error Occurred.")
+                    })
                 } else {
-                    alert('Can not find any image of you in the event.')
-                    window.location.reload();
+                    alert("Images or files are missing.");
                 }
+
+                $('#loader-spin').fadeOut(400, function() {
+                    $('#content-loader').fadeIn();
+                })
             })
-            .fail(function() {
-                alert("Error Occurred.")
-            })
-        } else {
-            alert("Images or files are missing.");
-        }
+        })
     })
 
     $('#user-image').change(function() {
@@ -78,4 +88,9 @@ $(document).ready(function() {
         $("#slider-show").empty();
         $("#slider-show").append($(this).val().toString() + '%');
     })
+
+    function closeMedia() {
+        let devices = video.srcObject.getTracks();
+        devices.forEach(device => device.stop());
+    }
 })

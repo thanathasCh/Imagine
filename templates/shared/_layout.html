@@ -25,12 +25,10 @@
                     <li><a class="nav-link" href={{ url_for('index') }}>Home</a></li>
                     <li><a class="nav-link" href={{ url_for('event') }}>Events</a></li>
                   </ul>
-                  
-                  
 
                   {% if session['isLogin'] == True %}
                   <div class="navbar my-2 my-lg-0">
-                    <p class="lead mr-3 font-weight-bold">Welcome! {{ session['username'] }}</p>
+                    <p class="lead mr-3 mt-3">Welcome! <span class="text-decoration-none">{{ session['username'] }}</span></p>
                     <a class="btn btn-danger" role="button" href="/logout">Logout</a>
                   </div>
                   {% else %}

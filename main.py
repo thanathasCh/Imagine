@@ -151,8 +151,6 @@ def processImage():
         eventImages = db.getImageByIds(imageIds)
         return render_template('showImages.html', event = event, eventImages = eventImages)
     else:
-        # flash.info(messages.noMatchFace)
-        # return redirect(url_for('selectImage', id=eventId))
         return ""
 
 @app.route('/eventDetail/<int:id>')
