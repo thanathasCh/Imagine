@@ -50,10 +50,12 @@ $(document).ready(function() {
                         }
                     })
                     .fail(function() {
-                        alert("Error Occurred.")
+                        alert("Error Occurred.");
+                        window.location.reload();
                     })
                 } else {
                     alert("Images or files are missing.");
+                    window.location.reload();
                 }
 
                 $('#loader-spin').fadeOut(400, function() {
