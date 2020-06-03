@@ -5,6 +5,10 @@
                 <div class="col-9">
                     <h1>{{ event.eventName }}</h1>
                 </div>
+
+                <div class="col-3">
+                    <a class="btn btn-default btn-block text-right" href="{{ url_for('selectImage', id=eventId) }}">Find yourself again.</a>
+                </div>
             </div>
             <label class="label label-info">{{ event.date }}</label>
         </div>

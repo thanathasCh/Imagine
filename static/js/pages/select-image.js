@@ -57,10 +57,6 @@ $(document).ready(function() {
                     alert("Images or files are missing.");
                     window.location.reload();
                 }
-
-                $('#loader-spin').fadeOut(400, function() {
-                    $('#content-loader').fadeIn();
-                })
             })
         })
     })

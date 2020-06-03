@@ -149,7 +149,7 @@ def processImage():
     if imageIds:
         event = db.getEventInformation(eventId)
         eventImages = db.getImageByIds(imageIds)
-        return render_template('showImages.html', event = event, eventImages = eventImages)
+        return render_template('showImages.html', eventId = eventId, event = event, eventImages = eventImages)
     else:
         return ""
 
