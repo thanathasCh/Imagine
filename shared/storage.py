@@ -9,7 +9,7 @@ class Storage:
             "authDomain": "imagine-cab17.firebaseapp.com",
             "databaseURL": "https://imagine-cab17.firebaseio.com",
             "storageBucket": "imagine-cab17.appspot.com",
-            "serviceAccount": "../imagine-cab17-firebase-adminsdk-fpuec-82d6ea31cc.json"
+            # "serviceAccount": "../imagine-cab17-firebase-adminsdk-fpuec-82d6ea31cc.json"
         }
         
         self.CoverImagePath = 'Event/{}/CoverImages'

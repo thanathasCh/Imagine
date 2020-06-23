@@ -145,6 +145,11 @@ every image, he/she can click on the `find yourself` button.
 
 ![modal]()
 
+If user is new and do does not have account, he/she can register to the application through sign up page.
+The password will be encrypted in the SQL database with Hash Table method.
+
+![Login]()
+
 The program will show another page, where it requests user the images with clear frontal face. 
 User can either choose to take photos through their webcam or images from their machine. 
 User can choose the similarity value as well. Higher the similarity value will decrease the fault 
@@ -154,3 +159,8 @@ of returned images, but higher the fault positive images.
 ![select image page]()
 
 ![return image]()
+
+### Remark
+Some function in the program such as edit and delete is not well-function. Due to the limitation of library that
+I chose to control Firebase does not have the function to delete partial of the bucket yet at the time of writing. 
+Due to the time limit I have to cut those function out. But I still be able to finish the main functions of the program.
