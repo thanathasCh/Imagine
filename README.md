@@ -119,10 +119,14 @@ html body
 
 The following sections will be the explanation of the program and processes.
 
+
+
 The program's flow will start by adding an event. This is the process that only the organizer can do. 
 Organizers is like admin who can add, edit and delete the events.
 
-![Organizer's View]()
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/home_page.png?raw=true)
+
+
 
 After every information has been filled including the event's images. The program will read those 
 information and add them to the SQL database. However, I chose to keep the images on Cloud Storage 
@@ -135,20 +139,32 @@ I did all of this to reduce the computation time and power when the user comes a
 Without these preparations, the server side will have to do the same redundant tasks every time one user 
 requests.
 
-![Adding page]()
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/admin_event.png?raw=true)
+
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/adding.png?raw=true)
+
+
 
 After the event has been created, users will be able to see all events and images inside. 
 User can click on a specific image to enhance it. And when the user wants to find him/herself over 
 every image, he/she can click on the `find yourself` button.
 
-![event detail]()
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/event_detail_2.png?raw=true)
 
-![modal]()
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/event_modal_2.png?raw=true)
+
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/event_detail_1.png?raw=true)
+
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/event_modal_1.png?raw=true)
 
 If user is new and do does not have account, he/she can register to the application through sign up page.
 The password will be encrypted in the SQL database with Hash Table method.
 
-![Login]()
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/signup.png?raw=true)
+
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/user_event.png?raw=true)
+
+
 
 The program will show another page, where it requests user the images with clear frontal face. 
 User can either choose to take photos through their webcam or images from their machine. 
@@ -156,9 +172,11 @@ User can choose the similarity value as well. Higher the similarity value will d
 positive, but could return less images. While lower the similarity value might increase the number 
 of returned images, but higher the fault positive images.
 
-![select image page]()
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/search.png?raw=true)
 
-![return image]()
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/loading.png?raw=true)
+
+![](https://github.com/thanathasCh/Imagine/blob/master/screenshots/result.png?raw=true)
 
 ### Remark
 Some function in the program such as edit and delete is not well-function. Due to the limitation of library that
