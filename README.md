@@ -1,11 +1,11 @@
 # Imagine
-This is web application project from Flask that I did for my term project in Intelligence System Development class.
-The application of this program is searching the images that have you in it by the given images of yourself.
+This is web application project made from Flask that I did for my term project in Intelligence System Development class.
+The main feature of this program is searching the images that have you in it from the given images of yourself.
 
 It also allows organizers to create, edit, and delete the event.
 
 ## Installing
-This is a project based on python. In order to run this project, you need the following libraries:
+This project is based on python. In order to run this project, you need the following libraries:
 
 1. Flask
 2. Numpy
@@ -17,13 +17,13 @@ This is a project based on python. In order to run this project, you need the fo
 8. passlib
 
 Or: 
-you can use yml file to recreate the conda environment with the library version that dev has bee used during development.
+you can use yml file to recreate the conda environment with the library version that dev had been using during the development period.
 
 ## Developing
 
 ### Flask
 
-In flask, there are folder specific folders for components:
+In flask, there are specific folders for each components:
     1. templates: All HTML files or your website's pages will be saved within this folder
     2. static: Static folders such as Javascript, CSS, Image, or Font are located in this folder. 
     I already separated them into folders that correspond to their names like JS, CSS, images, and font accordingly.
@@ -33,12 +33,12 @@ Creating Page:
     
     create function inside `main.py` and add it to the application's route.
 
-For example, I have created a page called newPage.html and want to add it to the website. 
+For example, I have created a new page named newPage.html and wanted to add it to the website. 
     The first parameter inside @app.route is URL path so if I want to call this function from URL dict. 
-    The second parameter is optional, it is used to specify method that this route allows making access.
+    The second parameter is optional, it is used to specify method that this route allows to access.
 
 In the end, you will have to return with render_template which is equivalence to return View() in .net core,
- and inside it will be string which is the same as HTML file that you want to show. Moreover, 
+ and inside it will be string which is the same as HTML file that you want to use. Moreover, 
  you can pass the model or data to view pass well with the following code
 
 ```
